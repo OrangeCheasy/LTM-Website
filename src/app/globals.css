@@ -1,185 +1,136 @@
 @import "tailwindcss";
 
 /*
-  Design tokens (CLAUDE.md §9.1). The site is dark only — no toggle, no
-  prefers-color-scheme branch, no data-theme attribute. Every token below is a
-  single value, not a light/dark pair. Everything visual should come from here
-  rather than a one-off hex value in a component.
+  Phase 1 design system.
+
+  The site is intentionally dark-only. New UI should consume the semantic
+  tokens and shared components below instead of introducing local colours,
+  type scales, container widths, or spacing systems.
 */
 @theme {
-  /* --- Colour: molten dark (§9.1) --------------------------------------- */
-  --color-bg: #0b0a0a; /* warm near-black page canvas, not pure #000 */
-  --color-surface: #141212; /* cards, raised panels, section bands */
-  --color-surface-2: #1c1919; /* hover states, nested surfaces */
-  --color-border: #2a2626; /* hairline, low contrast */
-  --color-text: #f5f3f1; /* warm white */
-  /*
-    The middle rung of the text ladder, added for the hero (owner call): the
-    mockup sets "I design and build digital experiences." dimmer than the
-    white line above it and clearly brighter than the paragraph below, and
-    there was no token between --text and --text-muted to express that.
-
-    Sampled from the mockup at #bfbfbf, then re-tinted warm rather than used
-    literally — §9.1 is explicit that pure grey next to orange reads dead and
-    cheap. This sits at the same relative luminance as the mockup's grey
-    (~191) while staying on the warm axis the other neutrals use, which puts
-    it about 36% of the way from --text-muted to --text.
-
-    Contrast on --bg is roughly 10.6:1, so it passes AA for body copy as well
-    as headings (§10).
-  */
+  /* Core palette */
+  --color-bg: #0b0a0a;
+  --color-surface: #141212;
+  --color-surface-2: #1c1919;
+  --color-border: #2a2626;
+  --color-text: #f5f3f1;
   --color-text-secondary: #c3beba;
   --color-text-muted: #a8a19c;
   --color-accent: #ff6a1a;
   --color-accent-hover: #ff8340;
-  --color-accent-dim: rgb(255 106 26 / 12%); /* glow, tints, focus rings */
-
-  /*
-    The brand mark's own orange, sampled from the owner-supplied artwork at
-    public/tab/lm-icon.webp. Deliberately NOT --color-accent: the two are
-    different oranges, and the header/footer logo was rendering in the accent,
-    which is why it did not match the supplied logo file. Accent stays the UI
-    action colour (§9.2); this is used by the "lm" mark alone.
-  */
+  --color-accent-dim: rgb(255 106 26 / 12%);
   --color-logo: #f75701;
 
-  /*
-    Deep brown, laid over the closing CTA panel at low opacity to mute it
-    (owner call). Sampled from the new mockup, where that panel is far darker
-    and browner than the glow alone produces: its field reads #100c09 and even
-    its brightest corner only reaches #201008, against a much hotter orange in
-    the build this replaced.
-
-    An overlay rather than a darker base colour, because it has to sit ABOVE
-    the gradient — muting the orange is the point, and a base underneath it
-    cannot do that. See CTASection.tsx for the layer order.
-  */
-  --color-panel-brown: #3a2008;
-
-  /*
-    Not in §9.1 — form validation (QuoteForm, §8) still needs a colour
-    distinct from accent, so an invalid field doesn't read as a call to
-    action. Same warm-dark discipline as the palette above: legible on
-    --bg/--surface, and far enough from orange that the two are never
-    confused as the same signal.
-  */
+  /* Status colours */
   --color-danger: #ff6b6b;
   --color-danger-dim: rgb(255 107 107 / 14%);
-
-  /*
-    The "done" green, added for the service pages' hero and process artwork
-    (AutomationHeroArt, ProcessArt), where the mockup marks every completed
-    step with a filled green tick.
-
-    A STATUS COLOUR, NOT A BRAND ONE, and the same category as --color-danger
-    above: it says "this finished", the way danger says "this is wrong".
-    Orange cannot do that job, because §9.2 has already spent orange on
-    actions — a tick rendered in accent would read as something to click.
-
-    Sampled from the mockup at rgb(78,182,58) in the hero card and
-    rgb(90,197,64) in the process window; #56c240 sits between the two. It is
-    the one hue on the site outside the warm axis, which is deliberate: a
-    warm-tinted green next to this much orange stops reading as green at all.
-
-    SCOPE: decorative artwork only. Nothing interactive may use it (§9.2), and
-    the ticks it fills are aria-hidden — the written label beside each one
-    carries the meaning, so the glyph's contrast against the fill is not an
-    accessibility bar.
-  */
   --color-success: #56c240;
 
-  /*
-    Syntax colours for the hero's editor panel (HeroArt.tsx), which renders a
-    real code sample as DOM rather than shipping a picture of one. They are
-    here rather than inline in the component because §9.1 allows no hardcoded
-    hex in a component, and a five-colour palette is exactly the kind of thing
-    that drifts if it lives in JSX.
-
-    Scope: decorative illustration only. These are not UI colours and nothing
-    interactive may use them — the same rule the service identity hues run on
-    (§9.2). Tuned warm so the panel sits inside the molten palette instead of
-    importing a stock editor theme; the one cool note is `tag`, which the
-    mockup's editor also has and which is what stops the block reading as a
-    wash of orange.
-  */
+  /* Legacy artwork colours retained while the old pages are still live. */
+  --color-panel-brown: #3a2008;
   --color-code-keyword: #ff8f5e;
   --color-code-string: #d8c98a;
   --color-code-tag: #9fc9f0;
   --color-code-attr: #c9b6e8;
   --color-code-punct: #6f6763;
-
-  /*
-    Service identity hues (CLAUDE.md §1's five service lines) — untouched by
-    this phase. Identity only, never a link, button or focus ring (§9.2);
-    kept as-is pending an explicit decision on whether/how they carry into
-    the redesign.
-  */
   --color-service-automation: #fcc4bf;
   --color-service-excel: #e1d4a4;
   --color-service-websites: #ade2ca;
   --color-service-local: #b8d7ff;
   --color-service-roblox: #ebc6ec;
-
-  /*
-    Tinted versions of the five hues, for identity chips that sit on a dark
-    surface. The pastels above were drawn for a light UI: at full strength on
-    --surface they read as bright stickers stuck onto the page, which is the
-    one thing on the home page that looked pasted in rather than designed.
-    Mixed down to a fifth, the hue still identifies the service at a glance
-    but sits in the molten-dark palette instead of fighting it.
-
-    Derived from the hue tokens rather than hardcoded, so recolouring a
-    service is still a one-line change.
-  */
   --color-service-automation-tint: color-mix(in srgb, var(--color-service-automation) 20%, transparent);
   --color-service-excel-tint: color-mix(in srgb, var(--color-service-excel) 20%, transparent);
   --color-service-websites-tint: color-mix(in srgb, var(--color-service-websites) 20%, transparent);
   --color-service-local-tint: color-mix(in srgb, var(--color-service-local) 20%, transparent);
   --color-service-roblox-tint: color-mix(in srgb, var(--color-service-roblox) 20%, transparent);
 
-  /* --- Type ------------------------------------------------------------ */
+  /* Font families */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
-  /*
-    A real scale, fluid via clamp() so there is one class per level instead of
-    a breakpoint ladder. The lower bound is what renders at 320px.
-  */
-  --text-display: clamp(2.5rem, 1.9rem + 3vw, 3.75rem);
-  --text-display--line-height: 1.05;
-  --text-display--letter-spacing: -0.02em;
+  /* Semantic typography roles */
+  --text-display: clamp(2.75rem, 2rem + 3vw, 4.5rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.03em;
 
-  --text-h1: clamp(2rem, 1.6rem + 2vw, 2.75rem);
-  --text-h1--line-height: 1.1;
-  --text-h1--letter-spacing: -0.015em;
+  --text-page: clamp(2.1rem, 1.7rem + 1.8vw, 3rem);
+  --text-page--line-height: 1.08;
+  --text-page--letter-spacing: -0.02em;
 
-  --text-h2: clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem);
-  --text-h2--line-height: 1.2;
-  --text-h2--letter-spacing: -0.01em;
+  --text-section: clamp(1.6rem, 1.4rem + 0.8vw, 2rem);
+  --text-section--line-height: 1.18;
+  --text-section--letter-spacing: -0.015em;
 
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.35;
+  --text-card: 1.25rem;
+  --text-card--line-height: 1.35;
 
   --text-body: 1.0625rem;
   --text-body--line-height: 1.65;
 
-  --text-small: 0.875rem;
-  --text-small--line-height: 1.5;
+  --text-body-secondary: 0.9375rem;
+  --text-body-secondary--line-height: 1.6;
+
+  --text-metadata: 0.8125rem;
+  --text-metadata--line-height: 1.45;
+  --text-metadata--letter-spacing: 0.01em;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+
+  /* Backward-compatible aliases for pages that will be migrated in later phases. */
+  --text-h1: var(--text-page);
+  --text-h1--line-height: var(--text-page--line-height);
+  --text-h1--letter-spacing: var(--text-page--letter-spacing);
+  --text-h2: var(--text-section);
+  --text-h2--line-height: var(--text-section--line-height);
+  --text-h2--letter-spacing: var(--text-section--letter-spacing);
+  --text-h3: var(--text-card);
+  --text-h3--line-height: var(--text-card--line-height);
+  --text-small: var(--text-body-secondary);
+  --text-small--line-height: var(--text-body-secondary--line-height);
+}
+
+:root {
+  /* Layout */
+  --layout-max: 72rem;
+  --layout-reading: 44rem;
+  --layout-gutter: 1.25rem;
+
+  /* Spacing rhythm */
+  --space-section: clamp(4rem, 8vw, 6.5rem);
+  --space-section-compact: clamp(2.5rem, 5vw, 4rem);
+  --space-heading-body: 1rem;
+  --space-card: 1.5rem;
+  --space-grid: 1.5rem;
+  --space-inline: 0.625rem;
+
+  /* Shape */
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --layout-gutter: 2rem;
+    --space-card: 1.75rem;
+    --space-grid: 2rem;
+  }
 }
 
 @layer base {
   html {
     color-scheme: dark;
-    /* Stops iOS Safari inflating text in landscape. */
     -webkit-text-size-adjust: 100%;
   }
 
   body {
+    min-width: 0;
+    overflow-x: clip;
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.65;
+    line-height: var(--text-body--line-height);
   }
 
   h1,
@@ -190,27 +141,17 @@
     font-weight: 600;
   }
 
-  /*
-    One global focus ring (CLAUDE.md §10). :focus-visible rather than :focus so
-    mouse users do not see it on click. The 2px offset is what keeps it visible
-    on accent-filled buttons, where a ring drawn inside would vanish.
-  */
   :focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline-offset: 3px;
+    border-radius: 3px;
   }
 
-  /*
-    §10: color-scheme: dark handles most browser-rendered UI, but Chrome's
-    autofill highlight is a hardcoded light-yellow fill that ignores it — an
-    autofilled QuoteForm input would otherwise render with a white background
-    against the dark surface. The box-shadow inset is the standard override:
-    it paints over the autofill background with the surface colour without
-    touching layout, and the long transition delay stops Chrome's own
-    background-color transition from flashing yellow before the override
-    applies.
-  */
+  ::selection {
+    background: var(--color-accent-dim);
+    color: var(--color-text);
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus {
@@ -232,13 +173,6 @@
   }
 }
 
-/*
-  Hides the scrollbar on an horizontally-scrollable element while leaving it
-  scrollable by touch, trackpad, drag or keyboard — the case study
-  Screenshots carousel (ScreenshotCarousel.tsx) uses real overflow-x scroll
-  rather than a transform-driven slide, and a raw OS scrollbar under a warm
-  dark surface reads as un-styled chrome rather than part of the design.
-*/
 @utility no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
