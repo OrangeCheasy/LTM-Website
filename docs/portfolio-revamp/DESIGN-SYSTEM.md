@@ -69,7 +69,7 @@ The global IA is data-driven from `src/data/site.ts` and uses these destinations
 - About — `/about`
 - Contact — `/contact`
 
-During the staged migration, `/projects` temporarily redirects to the existing `/portfolio` implementation. `/portfolio` is also treated as an active alias of Projects in the navigation. Phase 3 replaces that compatibility layer with the new projects route.
+Phase 3 makes `/projects` and `/projects/[slug]` the canonical project destinations. Legacy `/portfolio` index/detail URLs permanently redirect to the matching `/projects` route, while project image assets under `/portfolio/...` remain unchanged.
 
 The `/experience` route shell exists structurally in Phase 1; final experience content is deferred to Phase 4.
 
