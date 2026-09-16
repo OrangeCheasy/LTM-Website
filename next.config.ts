@@ -2,7 +2,24 @@ import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep the legacy portfolio URLs working while standardizing the public
+  // information architecture around /projects. The detail redirect only
+  // matches one path segment, so public assets under /portfolio/<slug>/* are
+  // not intercepted.
+  async redirects() {
+    return [
+      {
+        source: "/portfolio",
+        destination: "/projects",
+        permanent: true,
+      },
+      {
+        source: "/portfolio/:slug",
+        destination: "/projects/:slug",
+        permanent: true,
+      },
+    ];
+  },
 
   // Codespaces serves the dev server through a forwarded *.app.github.dev
   // domain, not localhost. Next 15+ blocks cross-origin requests to dev
