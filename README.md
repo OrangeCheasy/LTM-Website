@@ -68,7 +68,8 @@ v2.01 complete
 | Hosting | Cloudflare Workers |
 | Adapter | `@opennextjs/cloudflare` |
 | Worker tooling | Wrangler 4 |
-| CI | GitHub Actions |
+| CI | GitHub Actions, validation only |
+| Production deployment | Cloudflare Git integration |
 
 ## Local development
 
@@ -108,7 +109,7 @@ src/data/                 Structured project/service content
 src/lib/                  Shared utilities, types, navigation, and server logic
 public/                    Static assets
 docs/portfolio-revamp/    Current redesign specification and phase documents
-.github/workflows/         CI configuration
+.github/workflows/         Pull-request validation only
 ```
 
 ## Portfolio revamp documents
@@ -123,9 +124,34 @@ Legacy mockups and the old `CLAUDE.md`, `DEPLOYMENT.md`, and `TODO.md` documents
 
 ## Deployment
 
-Deployment is Cloudflare Workers + OpenNext + Wrangler. The repository currently contains GitHub CI for verification and the configured production deployment flow.
+There is **one automated deployment owner: Cloudflare**.
 
-Deployment behavior must remain isolated from minor working branches. Do not broaden deployment triggers to feature/fix/chore branches unless explicitly requested.
+### Production
+
+Cloudflare's Git integration is responsible for the automatic production deployment from `main`. A push/merge to `main` is therefore the production release event.
+
+Cloudflare performs the OpenNext/Workers build and upload. The repository must not add a second automated production deployment through GitHub Actions while this integration is enabled.
+
+### GitHub Actions
+
+GitHub Actions is validation-only. `.github/workflows/ci.yml` runs for pull requests targeting:
+
+- `main`
+- version branches matching `v*`
+
+It installs dependencies, lints, generates Cloudflare types, builds the OpenNext Worker, and typechecks. It does **not** upload or deploy anything and does not run again merely because a PR was merged.
+
+This separation prevents duplicate Cloudflare deployments and gives version branches CI coverage without making them production branches.
+
+### Version branches
+
+Branches such as `v2.01`, `v2.02`, and later versions are development milestones. They do not automatically deploy to production under the repository policy. Production changes are released only when intentionally merged/pushed to `main`.
+
+### Manual deployment
+
+The repository may retain a manual Wrangler/OpenNext deployment command for recovery or explicit maintenance. It is not part of normal automation and should only be used when intentionally requested.
+
+Do not add Cloudflare credentials or deployment jobs to GitHub Actions unless the deployment ownership model is deliberately changed in the future.
 
 ## License
 
