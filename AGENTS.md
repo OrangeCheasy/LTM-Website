@@ -66,7 +66,7 @@ Use clear minor branch names such as:
 - `chore/v2.01-repository-cleanup`
 - `docs/v2.01-content-update`
 
-Do not merge a phase's work directly into `main` unless `main` is explicitly the current major branch for that task.
+Do not merge a phase's work directly into `main` unless `main` is explicitly the current major branch for that task or the user is intentionally releasing completed version work to production.
 
 ### Phase version mapping
 
@@ -86,17 +86,42 @@ Each redesign phase increments the version by `0.01`:
 
 A new phase branch should be created from the completed previous version branch. Do not rewrite `v2.00`.
 
-## 4. Deployment safety
+## 4. Deployment ownership — mandatory
 
-Minor branches are implementation branches, not deployment branches.
+There is exactly **one automated production deployment owner: Cloudflare**.
 
-- Do not add CI/CD triggers that deploy from minor branches.
-- Do not broaden existing deployment branch filters to include feature/fix/chore/docs branches unless the user explicitly asks.
-- Do not intentionally run remote production deployment commands from a minor branch unless explicitly requested.
-- Local builds and local preview validation are allowed and encouraged.
-- Preserve the existing separation between validation and deployment.
+### Production deployment
 
-`wrangler.jsonc` defines `.open-next/worker.js` as the Worker entry point and runs the OpenNext worker build before Wrangler upload flows. Preserve that behavior when changing deployment configuration.
+- Cloudflare's Git integration deploys from `main`.
+- A push/merge to `main` is the production release event.
+- Do not add a GitHub Actions deploy job while Cloudflare's Git deployment remains enabled.
+- Do not add Cloudflare API tokens or account IDs to GitHub Actions for normal deployment.
+- Do not create a second automated Wrangler/OpenNext deployment path.
+
+### GitHub Actions
+
+GitHub Actions is **validation-only**.
+
+`.github/workflows/ci.yml` should run for pull requests targeting:
+
+- `main`
+- version branches matching `v*`
+
+Its job is to validate code by installing dependencies, linting, generating Cloudflare types, building the OpenNext worker, and typechecking. It must not upload, publish, create a Worker version, or deploy.
+
+The workflow intentionally does not run on merge/push merely to repeat Cloudflare's production build.
+
+### Version and minor branches
+
+- Minor branches never deploy.
+- Version branches such as `v2.01`, `v2.02`, etc. are development milestones and do not automatically deploy under repository policy.
+- Production only changes when completed work is intentionally merged/pushed to `main`.
+
+### Manual deployment
+
+A manual local deploy command may remain in `package.json` for recovery or explicit maintenance, but it is not normal automation. Do not run it unless the user explicitly requests a manual deployment.
+
+`wrangler.jsonc` defines `.open-next/worker.js` as the Worker entry point and runs the OpenNext worker build before Wrangler upload flows. Preserve that behavior.
 
 ## 5. Phase workflow
 
@@ -193,13 +218,11 @@ For code-bearing changes, run or verify the equivalent of:
 ```bash
 npm ci
 npm run lint
-npm run build
+npm run build:worker
 npx tsc --noEmit
 ```
 
-Run `npm run build:worker` as well when a change touches deployment, runtime compatibility, route handling, middleware-like behavior, OpenNext configuration, Wrangler configuration, or Cloudflare bindings.
-
-Note: typecheck should run after `next build` when generated Next.js route types are required.
+The OpenNext build is the preferred CI build because it validates the Worker artifact Cloudflare will deploy. Typecheck should run after the build so generated Next.js route types exist.
 
 Also manually review, when relevant:
 
