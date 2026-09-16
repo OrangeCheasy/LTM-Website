@@ -12,7 +12,7 @@ const BASE_URL = "https://liamthemo.com";
   staged revamp. Phase 9 will reconcile indexing across the whole site.
 */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["/projects", "/about", "/contact"];
+  const staticRoutes = ["/projects", "/experience", "/about", "/contact"];
   const serviceRoutes = serviceSlugs.map((slug) => `/services/${slug}`);
   const projectRoutes = projects.map((project) => `/projects/${project.slug}`);
 

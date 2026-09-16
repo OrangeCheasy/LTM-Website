@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CTASection from "@/components/CTASection";
+import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
 import ProfileHero from "@/components/ProfileHero";
 import ServicesSection from "@/components/ServicesSection";
@@ -40,6 +41,8 @@ export default function Home() {
           <FeaturedWork projects={projects} />
         </div>
       </Section>
+
+      <ExperienceSection />
 
       <ServicesSection />
 
