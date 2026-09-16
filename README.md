@@ -33,26 +33,104 @@ Each portfolio phase maps to a `v0.01` version increment:
 | 8 | `v2.08` | Work With Me, footer, visitor statistic |
 | 9 | `v2.09` | Accessibility, SEO, performance, launch audit |
 
-## Development workflow
+The detailed implementation plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/).
 
-Follow `AGENTS.md` for repository rules and branch/version requirements.
+## Git workflow
 
-For every implementation task:
+This repository uses version branches as stable major branches.
 
-1. identify the current major branch (`main` or `vX.XX`)
-2. create a new minor branch from that exact major branch
-3. make all code/content/config changes only on the minor branch
-4. validate the change locally/through CI
-5. open a pull request back into the same major branch
-6. merge only when the task is complete
+- Major branches are `main` and branches matching `vX.XX`.
+- Never implement work directly on a major branch.
+- Create a minor working branch from the current major branch for every feature, fix, cleanup, or documentation task.
+- Complete and validate the work on the minor branch, then merge it back into the same major branch.
+- Minor branches must not introduce deployment triggers or other automation intended to deploy from the minor branch.
+- When a phase is complete, the next phase begins from a new major branch with the version incremented by `0.01`.
 
-Minor branches are development-only and must not be deployment targets. Completed version branches may be released to `main` after their production PR passes CI.
+Example:
 
-## Cloudflare deployment
+```text
+v2.01
+  └─ feat/v2.01-design-system
+       └─ merge back into v2.01
 
-Production is deployed from `main` through Cloudflare Workers Builds. GitHub Actions is validation-only.
+v2.01 complete
+  └─ create v2.02 for Phase 2
+```
 
-Cloudflare should use:
+## Stack
+
+| Concern | Technology |
+| --- | --- |
+| Framework | Next.js 16, App Router |
+| UI | React 19 |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Hosting | Cloudflare Workers |
+| Adapter | `@opennextjs/cloudflare` |
+| Worker tooling | Wrangler 4 |
+| CI | GitHub Actions, validation only |
+| Production deployment | Cloudflare Git integration |
+
+## Local development
+
+Node.js 22 or newer is recommended.
+
+```bash
+npm install
+npm run dev
+```
+
+Useful validation commands:
+
+```bash
+npm run lint
+npm run build
+npx tsc --noEmit
+npm run build:worker
+```
+
+`npm run build` must remain the normal Next.js production build (`next build`). OpenNext invokes that script internally when creating the Worker artifact.
+
+`npm run build:worker` runs the OpenNext adapter and generates `.open-next/`, including `.open-next/worker.js` and `.open-next/assets`.
+
+For a local Cloudflare/OpenNext preview:
+
+```bash
+npm run preview
+```
+
+## Project structure
+
+```text
+src/app/                  Next.js routes and route-level metadata
+src/components/           Shared UI components
+src/components/service/   Existing service-specific UI components
+src/data/                 Structured project/service content
+src/lib/                  Shared utilities, types, navigation, and server logic
+public/                    Static assets
+docs/portfolio-revamp/    Current redesign specification and phase documents
+.github/workflows/         Pull-request validation only
+```
+
+## Portfolio revamp documents
+
+Start with:
+
+- [`docs/portfolio-revamp/README.md`](./docs/portfolio-revamp/README.md) — master redesign plan and homepage order
+- [`docs/portfolio-revamp/CURRENT-STATE-AUDIT.md`](./docs/portfolio-revamp/CURRENT-STATE-AUDIT.md) — current-site audit
+- `docs/portfolio-revamp/PHASE-XX-*.md` — phase-specific scope, implementation guidance, and acceptance criteria
+
+Legacy mockups and the old `CLAUDE.md`, `DEPLOYMENT.md`, and `TODO.md` documents have intentionally been removed. Do not use or recreate them as project specifications.
+
+## Deployment
+
+There is **one automated deployment owner: Cloudflare**.
+
+### Production
+
+Cloudflare's Git integration is responsible for the automatic production deployment from `main`. A push/merge to `main` is therefore the production release event.
+
+For this OpenNext-based Next.js application, Cloudflare Workers Builds must use the OpenNext CLI directly:
 
 ```bash
 # Build command
@@ -62,18 +140,46 @@ npx @opennextjs/cloudflare build
 npx @opennextjs/cloudflare deploy
 ```
 
-The package `build` script must remain `next build`; OpenNext invokes it internally. Do not replace the package `build` script with `opennextjs-cloudflare build`, or the build will recurse.
+The deployment chain is intentional:
 
-`npm run build:worker` explicitly generates the OpenNext Worker output for local/manual validation. `npm run deploy` runs the full OpenNext build-and-deploy flow manually when needed.
+1. Cloudflare runs `npx @opennextjs/cloudflare build`.
+2. OpenNext invokes the package `build` script, which must remain `next build`.
+3. OpenNext transforms the Next.js output into `.open-next/worker.js` and `.open-next/assets`.
+4. Cloudflare runs `npx @opennextjs/cloudflare deploy`, which deploys the already-built OpenNext Worker.
 
-## Validation
+Do not point the Cloudflare Build command at `npm run build`; that only creates the Next.js output, not the final OpenNext Worker. Do not change the package `build` script to call OpenNext, because OpenNext itself invokes that script and would recurse indefinitely.
 
-Pull requests targeting `main` or `v*` run the repository CI suite:
+The repository must not add a second automated production deployment through GitHub Actions while Cloudflare's Git integration is enabled.
 
-- dependency install
-- ESLint
-- Cloudflare type generation
-- OpenNext Worker build
-- TypeScript typecheck
+### GitHub Actions
 
-Production deployment remains owned by Cloudflare rather than GitHub Actions.
+GitHub Actions is validation-only. `.github/workflows/ci.yml` runs for pull requests targeting:
+
+- `main`
+- version branches matching `v*`
+
+It installs dependencies, lints, generates Cloudflare types, builds the OpenNext Worker, and typechecks. It does **not** upload or deploy anything and does not run again merely because a PR was merged.
+
+This separation prevents duplicate Cloudflare deployments and gives version branches CI coverage without making them production branches.
+
+### Version branches
+
+Branches such as `v2.01`, `v2.02`, and later versions are development milestones. They do not automatically deploy to production under the repository policy. Production changes are released only when intentionally merged/pushed to `main`.
+
+### Manual deployment
+
+For an explicitly requested manual deployment, use the repository's OpenNext deployment script:
+
+```bash
+npm run deploy
+```
+
+That command builds the OpenNext Worker and deploys it through the OpenNext Cloudflare adapter.
+
+Do not add Cloudflare credentials or deployment jobs to GitHub Actions unless the deployment ownership model is deliberately changed in the future.
+
+## License
+
+Copyright © 2026 Liam Mo. All rights reserved.
+
+This repository and its contents are proprietary. Unauthorized copying, modification, distribution, or use of this source code is prohibited.
