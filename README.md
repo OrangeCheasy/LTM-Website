@@ -89,15 +89,15 @@ npx tsc --noEmit
 npm run build:worker
 ```
 
-`npm run build:worker` generates the OpenNext worker output in `.open-next/`, including `.open-next/worker.js`.
+`npm run build` must remain the normal Next.js production build (`next build`). OpenNext invokes that script internally when creating the Worker artifact.
+
+`npm run build:worker` runs the OpenNext adapter and generates `.open-next/`, including `.open-next/worker.js` and `.open-next/assets`.
 
 For a local Cloudflare/OpenNext preview:
 
 ```bash
 npm run preview
 ```
-
-The Wrangler configuration also defines a build command, so Wrangler upload/deploy flows generate the OpenNext worker before reading the configured `.open-next/worker.js` entry point.
 
 ## Project structure
 
@@ -130,25 +130,24 @@ There is **one automated deployment owner: Cloudflare**.
 
 Cloudflare's Git integration is responsible for the automatic production deployment from `main`. A push/merge to `main` is therefore the production release event.
 
-The Cloudflare project is configured with these commands:
+For this OpenNext-based Next.js application, Cloudflare Workers Builds must use the OpenNext CLI directly:
 
 ```bash
 # Build command
-npm run build
+npx @opennextjs/cloudflare build
 
 # Deploy command
-npx wrangler deploy
+npx @opennextjs/cloudflare deploy
 ```
 
 The deployment chain is intentional:
 
-1. Cloudflare runs `npm run build`, which performs the standard Next.js production build.
-2. Cloudflare then runs `npx wrangler deploy`.
-3. `wrangler.jsonc` defines a Wrangler `build.command` that runs `npm run build:worker` before deployment.
-4. `npm run build:worker` runs the OpenNext adapter and generates `.open-next/worker.js` plus `.open-next/assets`.
-5. Wrangler uploads the generated Worker and assets.
+1. Cloudflare runs `npx @opennextjs/cloudflare build`.
+2. OpenNext invokes the package `build` script, which must remain `next build`.
+3. OpenNext transforms the Next.js output into `.open-next/worker.js` and `.open-next/assets`.
+4. Cloudflare runs `npx @opennextjs/cloudflare deploy`, which deploys the already-built OpenNext Worker.
 
-Do not remove the Wrangler build hook while Cloudflare uses `npm run build` as its build command; the normal Next.js build alone does not generate `.open-next/worker.js`.
+Do not point the Cloudflare Build command at `npm run build`; that only creates the Next.js output, not the final OpenNext Worker. Do not change the package `build` script to call OpenNext, because OpenNext itself invokes that script and would recurse indefinitely.
 
 The repository must not add a second automated production deployment through GitHub Actions while Cloudflare's Git integration is enabled.
 
@@ -169,13 +168,13 @@ Branches such as `v2.01`, `v2.02`, and later versions are development milestones
 
 ### Manual deployment
 
-For an explicitly requested manual deployment, the same deployment command can be run from an appropriately prepared environment:
+For an explicitly requested manual deployment, use the repository's OpenNext deployment script:
 
 ```bash
-npx wrangler deploy
+npm run deploy
 ```
 
-Because Wrangler owns the OpenNext pre-deploy build hook, direct `wrangler deploy` also generates the required Worker artifact before upload.
+That command builds the OpenNext Worker and deploys it through the OpenNext Cloudflare adapter.
 
 Do not add Cloudflare credentials or deployment jobs to GitHub Actions unless the deployment ownership model is deliberately changed in the future.
 
