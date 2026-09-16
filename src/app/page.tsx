@@ -4,6 +4,7 @@ import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
 import ProfileHero from "@/components/ProfileHero";
 import ServicesSection from "@/components/ServicesSection";
+import SkillsSection from "@/components/SkillsSection";
 import { LinkButton, Section, SectionHeader } from "@/components/ui";
 import { profileContent } from "@/data/profile";
 import { projects } from "@/data/projects";
@@ -43,6 +44,8 @@ export default function Home() {
       </Section>
 
       <ExperienceSection />
+
+      <SkillsSection />
 
       <ServicesSection />
 
