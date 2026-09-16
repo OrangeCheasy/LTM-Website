@@ -5,6 +5,7 @@ interface ExperienceListProps {
   entries: readonly ExperienceEntry[];
   detailed?: boolean;
   emptyDescription?: string;
+  headingLevel?: "h2" | "h3";
 }
 
 export default function ExperienceList({
@@ -12,6 +13,7 @@ export default function ExperienceList({
   detailed = false,
   emptyDescription =
     "Role details, dates, and locations are being finalized before they are published.",
+  headingLevel = "h3",
 }: ExperienceListProps) {
   if (entries.length === 0) {
     return (
@@ -23,6 +25,8 @@ export default function ExperienceList({
       </div>
     );
   }
+
+  const RoleHeading = headingLevel;
 
   return (
     <ol className="divide-y divide-border border-y border-border">
@@ -39,7 +43,7 @@ export default function ExperienceList({
           </div>
 
           <div className="min-w-0">
-            <h3 className="text-card text-text">{entry.role}</h3>
+            <RoleHeading className="text-card text-text">{entry.role}</RoleHeading>
             <p className="mt-1 text-body-secondary font-medium text-text-secondary">
               {entry.organization}
             </p>
