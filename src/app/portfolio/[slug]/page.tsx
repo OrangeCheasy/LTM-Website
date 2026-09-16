@@ -169,7 +169,7 @@ export default async function ProjectPage({
     <>
       <section className="mx-auto max-w-6xl px-5 pt-8 pb-6 sm:px-8 sm:pt-10 sm:pb-8">
         <Link
-          href="/portfolio"
+          href="/projects"
           className="text-small font-medium text-accent underline underline-offset-4 hover:text-accent-hover"
         >
           ← All Projects
