@@ -4,40 +4,9 @@ import CTASection from "@/components/CTASection";
 import SectionLabel from "@/components/SectionLabel";
 
 /*
-  About (CLAUDE.md §15 step 6, Phase R6). Fully static — no data, no dynamic
-  APIs — so it prerenders and is served from the assets binding without
-  invoking the Worker (§4.1).
-
-  R6 RESTYLE — presentation AND a content cut, not just a rhythm match.
-  This page previously ran header band → "How this started" → "What I have
-  done" → "How I work" → photo pair → CTA, closer to a biography than the
-  "one screen plus a CTASection" a trust page needs (owner call, 2026-08-20).
-  "How this started" and "What I have done" are cut entirely, not condensed
-  — the owner picked three specific facts to carry the page (response time,
-  location, full-time study) and did not select the track-record summary, so
-  that content doesn't appear here in any form. Nothing below is new copy:
-  every sentence is reused, sentence-for-sentence or lightly trimmed, from
-  the version this replaced.
-
-  HEADER BAND DROPPED, same move as R3/R4/R5 (Services, Portfolio, Contact):
-  the old full-bleed `border-b bg-surface` band and the `Eyebrow` rule are
-  gone, replaced by the plain max-w-6xl container with an accent micro-label
-  above the heading that's now the site-wide convention.
-
-  THE FACTS ROW is the home page's "About Me" layout — label, then rule
-  dividers between icon-led columns — used as a STRUCTURE, not restocked
-  with its content. The owner was explicit: that block is "a reasonable
-  starting point" for the shape, but §11's "no generic virtue blocks" rule
-  still holds for this page, so the three columns below are operating facts
-  a client can hold the owner to (response time, where in-person work
-  happens, why capacity is limited), not "Clean code / Thoughtful design /
-  Problem solver." §9.6's trio-restoration override is scoped to the home
-  page's About section specifically and doesn't extend here.
-
-  PHOTOS. All three (owner call) — fish.webp stays beside the h1 as the
-  identity shot; gym.webp and food.webp stay as the pair under the facts row,
-  now carrying the one line of copy that used to close the old "How I work"
-  section rather than a new caption invented for them.
+  About remains a compact trust page. Phase 6 gives the existing personal
+  interest content a deliberate, linkable home at /about#outside-tech without
+  moving hobby content onto the professional homepage.
 */
 
 export const metadata: Metadata = {
@@ -52,9 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Three operating facts, not values — each one is something a client can
-// hold the owner to. See the file-level note on why this isn't the home
-// page's virtue trio despite sharing its layout.
 const facts: {
   title: string;
   description: string;
@@ -64,7 +30,6 @@ const facts: {
     title: "I answer quickly.",
     description:
       "Usually the same day. If a day passes with no reply, send it again rather than assuming the answer is no.",
-    // Clock.
     icon: (
       <>
         <circle cx="12" cy="12" r="8.6" />
@@ -76,7 +41,6 @@ const facts: {
     title: "I am in Calgary, Alberta.",
     description:
       "Anything needing hands on the hardware — repairs, printers, a setup in your office — happens in person around the city. Automation, spreadsheets, websites and Roblox work are remote, and for those it does not matter where you are.",
-    // Map pin.
     icon: (
       <>
         <path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21Z" />
@@ -88,7 +52,6 @@ const facts: {
     title: "I am studying full time.",
     description:
       "So I take on work I can finish properly rather than as much of it as possible. If a deadline is not going to work, you will hear that from me before you commit to anything, not afterwards.",
-    // Open book.
     icon: (
       <>
         <path d="M12 6.5c-1.6-1.1-3.6-1.6-5.5-1.4a1 1 0 0 0-.9 1v11.4a1 1 0 0 0 1.1 1c1.8-.2 3.7.3 5.3 1.4 1.6-1.1 3.5-1.6 5.3-1.4a1 1 0 0 0 1.1-1V6.1a1 1 0 0 0-.9-1c-1.9-.2-3.9.3-5.5 1.4Z" />
@@ -160,35 +123,43 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <p className="max-w-[36ch] text-small text-text-muted">
-            When I am away from a computer I am powerlifting, out fishing,
-            hiking or camping somewhere in Alberta, or out chasing good food.
-          </p>
-          <div className="grid shrink-0 grid-cols-2 gap-3 sm:w-64">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
-              <Image
-                src="/about/gym.webp"
-                alt="Liam at the gym on a bench press with a training partner."
-                fill
-                sizes="8rem"
-                className="object-cover"
-              />
-            </div>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
-              <Image
-                src="/about/food.webp"
-                alt="Liam adding fresh herbs to a bowl of pho at a restaurant."
-                fill
-                sizes="8rem"
-                className="object-cover"
-              />
+        <div
+          id="outside-tech"
+          className="mt-10 scroll-mt-24 border-t border-border pt-8"
+        >
+          <SectionLabel>Outside the Tech</SectionLabel>
+          <h2 className="mt-2 text-h2 text-text">Life away from the keyboard</h2>
+
+          <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-[42ch] text-small text-text-muted">
+              When I am away from a computer I am powerlifting, out fishing,
+              hiking or camping somewhere in Alberta, or out chasing good food.
+            </p>
+            <div className="grid shrink-0 grid-cols-2 gap-3 sm:w-64">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
+                <Image
+                  src="/about/gym.webp"
+                  alt="Liam at the gym on a bench press with a training partner."
+                  fill
+                  sizes="8rem"
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
+                <Image
+                  src="/about/food.webp"
+                  alt="Liam adding fresh herbs to a bowl of pho at a restaurant."
+                  fill
+                  sizes="8rem"
+                  className="object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <CTASection secondary={{ href: "/portfolio", label: "See the work" }} />
+      <CTASection secondary={{ href: "/projects", label: "See the work" }} />
     </>
   );
 }
