@@ -97,7 +97,7 @@ For a local Cloudflare/OpenNext preview:
 npm run preview
 ```
 
-The Wrangler configuration also defines a build command, so Wrangler upload flows generate the OpenNext worker before reading the configured `.open-next/worker.js` entry point.
+The Wrangler configuration also defines a build command, so Wrangler upload/deploy flows generate the OpenNext worker before reading the configured `.open-next/worker.js` entry point.
 
 ## Project structure
 
@@ -130,7 +130,27 @@ There is **one automated deployment owner: Cloudflare**.
 
 Cloudflare's Git integration is responsible for the automatic production deployment from `main`. A push/merge to `main` is therefore the production release event.
 
-Cloudflare performs the OpenNext/Workers build and upload. The repository must not add a second automated production deployment through GitHub Actions while this integration is enabled.
+The Cloudflare project is configured with these commands:
+
+```bash
+# Build command
+npm run build
+
+# Deploy command
+npx wrangler deploy
+```
+
+The deployment chain is intentional:
+
+1. Cloudflare runs `npm run build`, which performs the standard Next.js production build.
+2. Cloudflare then runs `npx wrangler deploy`.
+3. `wrangler.jsonc` defines a Wrangler `build.command` that runs `npm run build:worker` before deployment.
+4. `npm run build:worker` runs the OpenNext adapter and generates `.open-next/worker.js` plus `.open-next/assets`.
+5. Wrangler uploads the generated Worker and assets.
+
+Do not remove the Wrangler build hook while Cloudflare uses `npm run build` as its build command; the normal Next.js build alone does not generate `.open-next/worker.js`.
+
+The repository must not add a second automated production deployment through GitHub Actions while Cloudflare's Git integration is enabled.
 
 ### GitHub Actions
 
@@ -149,7 +169,13 @@ Branches such as `v2.01`, `v2.02`, and later versions are development milestones
 
 ### Manual deployment
 
-The repository may retain a manual Wrangler/OpenNext deployment command for recovery or explicit maintenance. It is not part of normal automation and should only be used when intentionally requested.
+For an explicitly requested manual deployment, the same deployment command can be run from an appropriately prepared environment:
+
+```bash
+npx wrangler deploy
+```
+
+Because Wrangler owns the OpenNext pre-deploy build hook, direct `wrangler deploy` also generates the required Worker artifact before upload.
 
 Do not add Cloudflare credentials or deployment jobs to GitHub Actions unless the deployment ownership model is deliberately changed in the future.
 
