@@ -29,7 +29,7 @@ export default function Home() {
             id="featured-work-heading"
             eyebrow="Selected work"
             title="Featured Work"
-            description="A selection of software, game, and development projects. The full projects experience is rebuilt in Phase 3."
+            description="A selection of software, game, and development projects."
           />
           <LinkButton href="/projects" variant="ghost" size="sm">
             View More
