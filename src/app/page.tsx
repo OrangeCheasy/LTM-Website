@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CTASection from "@/components/CTASection";
+import EducationSection from "@/components/EducationSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
 import ProfileHero from "@/components/ProfileHero";
@@ -46,6 +47,8 @@ export default function Home() {
       <ExperienceSection />
 
       <SkillsSection />
+
+      <EducationSection />
 
       <ServicesSection />
 
