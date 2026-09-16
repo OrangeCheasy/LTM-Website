@@ -11,8 +11,8 @@ The site is currently being rebuilt from its older service-first layout into a p
 | Item | Value |
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
-| Current major branch | `v2.01` |
-| Current phase | Phase 1 — Design System & Site Shell |
+| Current major branch | `v2.02` |
+| Current phase | Phase 2 — Hero, Identity & About |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.

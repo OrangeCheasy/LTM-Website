@@ -1,4 +1,4 @@
-export type SocialKind = "github" | "contact";
+export type SocialKind = "github" | "linkedin" | "contact";
 
 export interface SocialLink {
   kind: SocialKind;
@@ -8,8 +8,9 @@ export interface SocialLink {
 }
 
 /*
-  LinkedIn is intentionally omitted until the owner supplies the exact profile
-  URL. Phase 2 can add it without changing the components that consume this data.
+  LinkedIn support is built into the shared icon system, but the link remains
+  intentionally omitted until the exact profile URL is supplied. Do not guess
+  or publish a profile URL from a name search.
 */
 export const socialLinks: readonly SocialLink[] = [
   {
