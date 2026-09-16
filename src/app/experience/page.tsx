@@ -29,6 +29,7 @@ export default function ExperiencePage() {
         <ExperienceList
           entries={orderedExperience}
           detailed
+          headingLevel="h2"
           emptyDescription="The route and shared experience model are complete. Exact public role wording, date ranges, locations, and any measurable outcomes are being held until they are confirmed rather than publishing guessed résumé information."
         />
       </div>
