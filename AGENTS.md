@@ -94,9 +94,22 @@ There is exactly **one automated production deployment owner: Cloudflare**.
 
 - Cloudflare's Git integration deploys from `main`.
 - A push/merge to `main` is the production release event.
+- Cloudflare's configured build command is `npm run build`.
+- Cloudflare's configured deploy command is `npx wrangler deploy`.
 - Do not add a GitHub Actions deploy job while Cloudflare's Git deployment remains enabled.
 - Do not add Cloudflare API tokens or account IDs to GitHub Actions for normal deployment.
 - Do not create a second automated Wrangler/OpenNext deployment path.
+
+The expected production command chain is:
+
+```bash
+npm run build
+npx wrangler deploy
+```
+
+`npm run build` performs the normal Next.js production build. `npx wrangler deploy` then reads `wrangler.jsonc`, whose `build.command` runs `npm run build:worker` before upload. That OpenNext build must generate `.open-next/worker.js` and `.open-next/assets` before Wrangler consumes them.
+
+Do not remove Wrangler's `build.command` while Cloudflare's build command remains `npm run build`; a plain Next.js build does not create the `.open-next/worker.js` entry point.
 
 ### GitHub Actions
 
@@ -119,9 +132,9 @@ The workflow intentionally does not run on merge/push merely to repeat Cloudflar
 
 ### Manual deployment
 
-A manual local deploy command may remain in `package.json` for recovery or explicit maintenance, but it is not normal automation. Do not run it unless the user explicitly requests a manual deployment.
+A direct `npx wrangler deploy` may be used for recovery or explicit maintenance, but it is not normal automation. Do not run it unless the user explicitly requests a manual deployment.
 
-`wrangler.jsonc` defines `.open-next/worker.js` as the Worker entry point and runs the OpenNext worker build before Wrangler upload flows. Preserve that behavior.
+Because Wrangler owns the OpenNext pre-deploy build hook, direct `wrangler deploy` must continue to generate the required Worker artifact before upload.
 
 ## 5. Phase workflow
 
@@ -205,9 +218,17 @@ Important commands:
 npm run build
 npm run build:worker
 npm run preview
+npx wrangler deploy
 ```
 
-`npm run build:worker` must produce `.open-next/worker.js` before direct Wrangler upload/deploy operations consume the configured entry point.
+Production Cloudflare Git integration uses:
+
+```bash
+npm run build
+npx wrangler deploy
+```
+
+`npm run build:worker` must produce `.open-next/worker.js` before Wrangler upload/deploy operations consume the configured entry point. The Wrangler `build.command` is what guarantees this when production uses `npx wrangler deploy` after the standard `npm run build` step.
 
 Do not expose Cloudflare secrets or GitHub tokens through `NEXT_PUBLIC_*` variables or client bundles.
 
