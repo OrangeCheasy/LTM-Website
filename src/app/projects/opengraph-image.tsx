@@ -8,6 +8,6 @@ export default async function Image() {
   return renderOgImage({
     title: "Projects",
     description:
-      "Real automation, spreadsheet and Roblox work — the problem, what was built, and what changed.",
+      "Software, games, automation, and technical projects — the problem, what was built, and the evidence available for the result.",
   });
 }

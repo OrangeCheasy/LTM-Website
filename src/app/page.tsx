@@ -26,10 +26,10 @@ export const metadata: Metadata = {
     description: profileContent.intro,
   },
   /*
-    Deliberately held at noindex until the remaining launch inputs are real:
-    final resume, exact LinkedIn URL, and approved experience/education data.
-    Phase 9 prepares the site for indexing without publishing known temporary
-    content into search results.
+    The homepage stays noindex until the remaining owner-supplied launch
+    assets are final: profile photo, resume, and final personal gallery
+    photos. LinkedIn, experience, education, metadata, and canonical routes
+    are already complete. Remove this hold only during the final launch pass.
   */
   robots: { index: false, follow: true },
 };

@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Link from "next/link";
 import CTASection from "@/components/CTASection";
-import SectionLabel from "@/components/SectionLabel";
+import { LinkButton, Section, SectionHeader, Tag } from "@/components/ui";
+import { sortedEducation } from "@/data/education";
+import { orderedExperience } from "@/data/experience";
+import { profileContent } from "@/data/profile";
+import { siteIdentity } from "@/data/site";
+import { featuredSkills } from "@/data/skills";
 
 export const metadata: Metadata = {
   title: "About",
@@ -10,147 +15,170 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
   openGraph: {
     type: "website",
+    url: "/about",
     title: "About — Liam Mo",
     description:
       "More about Liam Mo, a software developer and computer science student in Calgary building web applications, games, automation, and developer tools.",
   },
 };
 
-const facts: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}[] = [
+const principles = [
   {
-    title: "I like shipping complete systems.",
+    title: "Build the complete system",
     description:
-      "The part I enjoy most is taking an idea through implementation, deployment, and iteration instead of stopping at a prototype.",
-    icon: (
-      <>
-        <path d="M5 12.5 9.2 17 19 7" />
-        <circle cx="12" cy="12" r="9" />
-      </>
-    ),
+      "I enjoy the full path from an early idea through implementation, deployment, and the iteration that follows once something is actually being used.",
   },
   {
-    title: "I am based in Calgary, Alberta.",
+    title: "Keep the structure understandable",
     description:
-      "Most of what I build is software that can be developed and shared from anywhere, with Calgary as the home base behind the work.",
-    icon: (
-      <>
-        <path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21Z" />
-        <circle cx="12" cy="9.8" r="2.4" />
-      </>
-    ),
+      "I prefer modular, reusable code and clear boundaries between systems so a project stays easier to extend instead of getting harder with every feature.",
   },
   {
-    title: "I am studying computer science full time.",
+    title: "Solve the practical problem",
     description:
-      "Coursework gives me the fundamentals; personal and production projects are where I keep turning those ideas into working systems.",
-    icon: (
-      <>
-        <path d="M12 6.5c-1.6-1.1-3.6-1.6-5.5-1.4a1 1 0 0 0-.9 1v11.4a1 1 0 0 0 1.1 1c1.8-.2 3.7.3 5.3 1.4 1.6-1.1 3.5-1.6 5.3-1.4a1 1 0 0 0 1.1-1V6.1a1 1 0 0 0-.9-1c-1.9-.2-3.9.3-5.5 1.4Z" />
-        <path d="M12 6.5v13" />
-      </>
-    ),
+      "Architecture matters, but the end result still has to be useful. I try to keep the user experience and the real goal of the project visible while I build.",
   },
-];
+] as const;
 
 export default function AboutPage() {
+  const currentRoles = orderedExperience.filter((entry) => !entry.endDate);
+  const primaryEducation = sortedEducation[0];
+
   return (
     <>
-      <section className="relative">
-        <div className="relative mx-auto max-w-6xl px-5 pt-8 pb-6 sm:px-8 sm:pt-10 sm:pb-8">
-          <div className="flex flex-col-reverse items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <SectionLabel>About</SectionLabel>
-              <h1 className="mt-2 max-w-[20ch] text-h1 text-text">
-                Building useful software, one system at a time
-              </h1>
-              <p className="mt-4 max-w-[56ch] text-body text-text-muted">
-                I’m Liam, a software developer and computer science student in Calgary. I build
-                across web applications, games, automation, and developer tools, and I care about
-                clean systems, practical user experience, and actually getting projects deployed.
-              </p>
-            </div>
-            <div className="relative aspect-square w-40 shrink-0 overflow-hidden rounded-2xl border border-border sm:w-56">
-              <Image
-                src="/about/fish.webp"
-                alt="Liam smiling and holding a small fish he caught, with grassy hills and a blue sky behind him."
-                fill
-                sizes="(min-width: 640px) 14rem, 10rem"
-                className="object-cover"
-                priority
-              />
+      <Section
+        spacing="compact"
+        aria-labelledby="about-heading"
+        className="border-b border-border/70"
+      >
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
+          <div>
+            <SectionHeader
+              id="about-heading"
+              eyebrow="About me"
+              headingLevel="h1"
+              title="I like building the whole thing"
+              description={profileContent.intro}
+            />
+            <div className="mt-7 flex flex-wrap gap-3">
+              <LinkButton href="/projects" variant="primary">
+                See my work
+              </LinkButton>
+              <LinkButton href="/experience" variant="secondary">
+                Experience
+              </LinkButton>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
-        <div className="border-t border-border pt-8">
-          <div className="grid gap-8 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
-            {facts.map((fact) => (
-              <div key={fact.title} className="sm:px-6 sm:first:pl-0">
-                <div className="flex items-center gap-2">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.75}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-5 w-5 shrink-0 text-accent"
-                  >
-                    {fact.icon}
-                  </svg>
-                  <h2 className="text-h3 text-text">{fact.title}</h2>
+          <dl className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
+            <div className="p-5">
+              <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Based in</dt>
+              <dd className="mt-2 text-body font-medium text-text">{siteIdentity.location}</dd>
+            </div>
+            {primaryEducation ? (
+              <div className="border-t border-border p-5">
+                <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Studying</dt>
+                <dd className="mt-2 text-body font-medium text-text">{primaryEducation.institution}</dd>
+                <dd className="mt-1 text-body-secondary text-text-muted">{primaryEducation.program}</dd>
+              </div>
+            ) : null}
+            <div className="border-t border-border p-5">
+              <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Current roles</dt>
+              <dd className="mt-2 text-body font-medium text-text">{currentRoles.length}</dd>
+            </div>
+          </dl>
+        </div>
+      </Section>
+
+      <Section spacing="compact" aria-labelledby="principles-heading">
+        <SectionHeader
+          id="principles-heading"
+          eyebrow="How I work"
+          title="A few things I care about while building"
+          description="These show up across the web, game, automation, and technical projects I work on."
+        />
+
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {principles.map((principle, index) => (
+            <article
+              key={principle.title}
+              className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)]"
+            >
+              <span className="text-metadata font-semibold text-accent">0{index + 1}</span>
+              <h2 className="mt-4 text-card text-text">{principle.title}</h2>
+              <p className="mt-3 text-body-secondary text-text-muted">{principle.description}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        spacing="compact"
+        aria-labelledby="current-heading"
+        tone="surface"
+        className="border-y border-border/70"
+      >
+        <SectionHeader
+          id="current-heading"
+          eyebrow="Right now"
+          title="Work, school, and the tools around them"
+          description="My portfolio sits at the overlap of software development, computer science, game development, and hands-on technical work."
+        />
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12">
+          <div>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="text-card text-text">Current work</h2>
+              <Link href="/experience" className="text-caption font-medium text-accent hover:text-accent-hover">
+                Full experience →
+              </Link>
+            </div>
+            <div className="mt-4 divide-y divide-border rounded-[var(--radius-card)] border border-border bg-bg">
+              {currentRoles.map((entry) => (
+                <div key={entry.id} className="p-4 sm:p-5">
+                  <p className="text-body font-medium text-text">{entry.role}</p>
+                  <p className="mt-1 text-body-secondary text-text-muted">
+                    {entry.organization} · {entry.location}
+                  </p>
                 </div>
-                <p className="mt-3 text-small text-text-muted">{fact.description}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div id="outside-tech" className="mt-10 scroll-mt-24 border-t border-border pt-8">
-          <SectionLabel>Outside the Tech</SectionLabel>
-          <h2 className="mt-2 text-h2 text-text">Life away from the keyboard</h2>
-
-          <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-[42ch] text-small text-text-muted">
-              When I am away from a computer I am powerlifting, out fishing, hiking or camping
-              somewhere in Alberta, or out chasing good food.
+          <div>
+            <h2 className="text-card text-text">Technologies & tools</h2>
+            <p className="mt-2 max-w-[58ch] text-body-secondary text-text-muted">
+              The shared skills list stays limited to technologies supported by work, education, or project evidence elsewhere on the site.
             </p>
-            <div className="grid shrink-0 grid-cols-2 gap-3 sm:w-64">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
-                <Image
-                  src="/about/gym.webp"
-                  alt="Liam at the gym on a bench press with a training partner."
-                  fill
-                  sizes="8rem"
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border">
-                <Image
-                  src="/about/food.webp"
-                  alt="Liam adding fresh herbs to a bowl of pho at a restaurant."
-                  fill
-                  sizes="8rem"
-                  className="object-cover"
-                />
-              </div>
+            <div className="mt-5 flex flex-wrap gap-2" aria-label="Technologies and tools">
+              {featuredSkills.map((skill) => (
+                <Tag key={skill.name}>{skill.name}</Tag>
+              ))}
             </div>
           </div>
         </div>
-      </section>
+      </Section>
+
+      <Section spacing="compact" aria-labelledby="outside-heading">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)] sm:p-8">
+          <SectionHeader
+            id="outside-heading"
+            eyebrow="Outside the tech"
+            title="There is more to me than the projects"
+            description="Away from a computer, I spend time powerlifting, fishing, hiking or camping around Alberta, and looking for good food. The homepage has a small swipeable gallery from that side of life."
+          />
+          <LinkButton href="/#outside-tech" variant="secondary" size="sm" className="mt-6">
+            See the gallery
+            <span aria-hidden="true">→</span>
+          </LinkButton>
+        </div>
+      </Section>
 
       <CTASection
-        title="Want to build something together?"
-        description="If you have a software project, game, automation, or technical problem you want to discuss, send me the details."
-        ctaLabel="Contact Me"
-        secondary={{ href: "/projects", label: "See the work" }}
+        title="Want to talk about a project, role, or idea?"
+        description="If something in my work lines up with what you’re building, send me a message and some context."
+        ctaLabel="Contact me"
+        secondary={{ href: "/projects", label: "Browse projects" }}
       />
     </>
   );
