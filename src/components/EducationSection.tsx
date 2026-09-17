@@ -1,4 +1,4 @@
-import { LinkButton, MetadataRow, Section, SectionHeader } from "@/components/ui";
+import { LinkButton, MetadataRow, Section, SectionHeader, Tag } from "@/components/ui";
 import { sortedEducation } from "@/data/education";
 
 function educationDate(entry: (typeof sortedEducation)[number]) {
@@ -17,7 +17,7 @@ export default function EducationSection() {
           id="education-heading"
           eyebrow="Education"
           title="Computer science studies"
-          description="Full-time study alongside practical software projects and development work."
+          description="Academic foundations in computer science, mathematics, and software development alongside practical projects."
         />
         <LinkButton href="/about#outside-tech" variant="ghost" size="sm">
           Outside the Tech
@@ -46,6 +46,19 @@ export default function EducationSection() {
                     <MetadataRow items={metadata} className="md:justify-end" />
                   </div>
 
+                  {entry.coursework?.length ? (
+                    <div className="mt-4">
+                      <p className="text-caption font-medium uppercase tracking-[0.12em] text-text-muted">
+                        Relevant coursework
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {entry.coursework.map((course) => (
+                          <Tag key={course}>{course}</Tag>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
                   {entry.details?.length ? (
                     <ul className="mt-4 max-w-2xl space-y-2 text-body-secondary text-text-muted">
                       {entry.details.map((detail) => (
@@ -60,9 +73,7 @@ export default function EducationSection() {
         ) : (
           <div className="rounded-card border border-border bg-surface px-5 py-5 sm:px-6">
             <p className="max-w-2xl text-body-secondary text-text-secondary">
-              I’m currently studying computer science full time in Calgary. Exact institution,
-              date, and coursework details are being held back until the final public wording is
-              confirmed.
+              Education details are being finalized.
             </p>
           </div>
         )}
