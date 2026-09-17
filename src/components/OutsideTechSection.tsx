@@ -59,9 +59,10 @@ export default function OutsideTechSection() {
 
   return (
     <Section
+      id="outside-tech"
       spacing="compact"
       aria-labelledby="outside-tech-heading"
-      className="border-t border-border/70"
+      className="scroll-mt-24 border-t border-border/70"
     >
       <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12">
         <div>
