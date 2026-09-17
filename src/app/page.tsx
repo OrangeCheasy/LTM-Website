@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import CTASection from "@/components/CTASection";
 import EducationSection from "@/components/EducationSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
 import GitHubActivitySection from "@/components/GitHubActivitySection";
 import ProfileHero from "@/components/ProfileHero";
-import ServicesSection from "@/components/ServicesSection";
 import SkillsSection from "@/components/SkillsSection";
+import WorkWithMeSection from "@/components/WorkWithMeSection";
 import { LinkButton, Section, SectionHeader } from "@/components/ui";
 import { profileContent } from "@/data/profile";
 import { projects } from "@/data/projects";
@@ -53,13 +52,7 @@ export default function Home() {
 
       <GitHubActivitySection />
 
-      <ServicesSection />
-
-      <CTASection
-        title="Want to build something useful?"
-        description="If you have a project, software idea, or technical problem you want to discuss, send me the details and I’ll get back to you."
-        ctaLabel="Contact Me"
-      />
+      <WorkWithMeSection />
     </>
   );
 }
