@@ -94,7 +94,7 @@ export default async function ServiceDetailPage({
           </>
         }
         description={page.blurb}
-        backLink={{ href: "/#services", label: "Back to services" }}
+        backLink={{ href: "/", label: "Back home" }}
         asideSize="wide"
         actions={
           <>
@@ -103,7 +103,7 @@ export default async function ServiceDetailPage({
               <span aria-hidden="true">↗</span>
             </LinkButton>
             {page.secondaryCta ? (
-              <LinkButton href={page.secondaryCta.href} variant="secondary">
+              <LinkButton href="/projects" variant="secondary">
                 {page.secondaryCta.label}
                 <LineIcon name={page.secondaryCta.icon} className="h-4 w-4 shrink-0" />
               </LinkButton>
@@ -134,7 +134,7 @@ export default async function ServiceDetailPage({
                 <span className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] bg-accent-dim text-accent">
                   <LineIcon name={card.icon} className="h-5 w-5" />
                 </span>
-                <h2 className="mt-4 text-card text-text">{card.title}</h2>
+                <h3 className="mt-4 text-card text-text">{card.title}</h3>
                 {card.description ? (
                   <p className="mt-2 text-body-secondary text-text-muted">{card.description}</p>
                 ) : null}
@@ -223,7 +223,7 @@ export default async function ServiceDetailPage({
         description={page.closing.description}
         ctaLabel="Get started"
         filled
-        secondary={{ href: "/#services", label: "View other services" }}
+        secondary={{ href: "/projects", label: "View projects" }}
         topic={service.slug}
       />
     </>

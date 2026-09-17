@@ -105,7 +105,7 @@ export default function ProjectsPage() {
                       {projectCategoryLabel(featuredProject)}
                     </p>
                   ) : null}
-                  <h2 className="mt-3 text-section text-text">{featuredProject.title}</h2>
+                  <h3 className="mt-3 text-section text-text">{featuredProject.title}</h3>
                   <p className="mt-4 text-body-secondary text-text-muted">
                     {featuredProject.summary}
                   </p>

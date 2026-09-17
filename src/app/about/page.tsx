@@ -98,7 +98,7 @@ export default function AboutPage() {
               className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)]"
             >
               <span className="text-metadata font-semibold text-accent">0{index + 1}</span>
-              <h2 className="mt-4 text-card text-text">{principle.title}</h2>
+              <h3 className="mt-4 text-card text-text">{principle.title}</h3>
               <p className="mt-3 text-body-secondary text-text-muted">{principle.description}</p>
             </article>
           ))}
@@ -121,7 +121,7 @@ export default function AboutPage() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12">
           <div>
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-card text-text">Current work</h2>
+              <h3 className="text-card text-text">Current work</h3>
               <Link href="/experience" className="text-caption font-medium text-accent hover:text-accent-hover">
                 Full experience →
               </Link>
@@ -139,7 +139,7 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-card text-text">Technologies & tools</h2>
+            <h3 className="text-card text-text">Technologies & tools</h3>
             <p className="mt-2 max-w-[58ch] text-body-secondary text-text-muted">
               The shared skills list stays limited to technologies supported by work, education, or project evidence elsewhere on the site.
             </p>
