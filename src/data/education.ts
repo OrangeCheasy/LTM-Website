@@ -16,7 +16,7 @@ export const education: readonly EducationEntry[] = [
     institution: "Mount Royal University",
     program: "Bachelor of Science, Computer Science (In Progress)",
     startDate: "September 2024",
-    endDate: "June 2028",
+    endDate: "April 2028",
     location: "Calgary, AB",
     coursework: [
       "Foundations of Software Engineering",
