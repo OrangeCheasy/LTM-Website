@@ -1,4 +1,4 @@
-import { LinkButton, MetadataRow, Section, SectionHeader, Tag } from "@/components/ui";
+import { MetadataRow, Section, SectionHeader, Tag } from "@/components/ui";
 import { sortedEducation } from "@/data/education";
 
 function educationDate(entry: (typeof sortedEducation)[number]) {
@@ -12,17 +12,12 @@ function educationDate(entry: (typeof sortedEducation)[number]) {
 export default function EducationSection() {
   return (
     <Section spacing="compact" aria-labelledby="education-heading">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeader
-          id="education-heading"
-          eyebrow="Education"
-          title="Computer science studies"
-          description="Academic foundations in computer science, mathematics, and software development alongside practical projects."
-        />
-        <LinkButton href="/about#outside-tech" variant="ghost" size="sm">
-          Outside the Tech
-        </LinkButton>
-      </div>
+      <SectionHeader
+        id="education-heading"
+        eyebrow="Education"
+        title="Computer science studies"
+        description="Academic foundations in computer science, mathematics, and software development alongside practical projects."
+      />
 
       <div className="mt-8">
         {sortedEducation.length > 0 ? (
