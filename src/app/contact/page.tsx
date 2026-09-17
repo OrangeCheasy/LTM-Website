@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import QuoteForm from "@/components/QuoteForm";
-import SectionLabel from "@/components/SectionLabel";
+import SocialIcon from "@/components/SocialIcon";
+import { Section, SectionHeader } from "@/components/ui";
+import { socialLinks } from "@/data/social";
 import { SERVICE_META, type ServiceSlug } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
     "Get in touch with Liam Mo about a software project, game, automation, collaboration, or technical problem.",
+  alternates: { canonical: "/contact" },
   openGraph: {
     type: "website",
+    url: "/contact",
     title: "Contact — Liam Mo",
     description:
       "Get in touch about a software project, game, automation, collaboration, or technical problem.",
@@ -16,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 const serviceSlugs = Object.keys(SERVICE_META) as ServiceSlug[];
+const externalSocialLinks = socialLinks.filter((link) => link.external);
 
 function resolveTopic(raw: string | undefined): ServiceSlug | "unsure" | "" {
   if (!raw) return "";
@@ -33,52 +38,94 @@ export default async function ContactPage({
 
   const lowPressure = topic === "unsure";
   const heading = lowPressure
-    ? "Not sure where to start?"
-    : "Let’s talk about what you’re building";
+    ? "Not sure where to start? That’s fine."
+    : "Tell me what you’re working on";
   const description = lowPressure
-    ? "Describe the idea or problem in your own words. I’ll help figure out what the next practical step looks like."
+    ? "Describe the idea, problem, or rough goal in your own words. You do not need a finished specification before reaching out."
     : topic
-      ? `You selected ${SERVICE_META[topic].title.toLowerCase()}. Add the remaining details and I’ll take it from there.`
-      : "Share the project, idea, or technical problem you want to discuss. Fill in what you know and leave the rest flexible.";
+      ? `You selected ${SERVICE_META[topic].title.toLowerCase()}. Add the context you already know and leave anything uncertain flexible.`
+      : "Whether it is a project, collaboration, technical problem, or just a question about my work, send the context you have and we can start there.";
 
   return (
     <>
-      <section className="relative">
-        <div className="relative mx-auto max-w-6xl px-5 pt-8 pb-6 sm:px-8 sm:pt-10 sm:pb-8">
-          <SectionLabel>Contact</SectionLabel>
-          <h1 className="mt-2 max-w-[24ch] text-h1 text-text">{heading}</h1>
-          <p className="mt-4 max-w-[56ch] text-body text-text-muted">{description}</p>
+      <Section
+        spacing="compact"
+        aria-labelledby="contact-heading"
+        className="border-b border-border/70"
+      >
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
+          <SectionHeader
+            id="contact-heading"
+            eyebrow="Contact"
+            headingLevel="h1"
+            title={heading}
+            description={description}
+          />
 
-          <a
-            href="mailto:contact@liamthemo.com"
-            className="group mt-7 inline-flex items-center gap-2.5 rounded-full border border-accent px-5 py-2.5 font-medium text-text transition-all duration-200 hover:border-accent-hover hover:shadow-[0_0_24px_var(--color-accent-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5 shrink-0 text-accent"
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)]">
+            <p className="text-caption uppercase tracking-[0.12em] text-text-muted">Direct contact</p>
+            <a
+              href="mailto:contact@liamthemo.com"
+              className="mt-3 block break-all text-body font-medium text-text transition-colors hover:text-accent"
             >
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="m3 7 9 6 9-6" />
-            </svg>
-            contact@liamthemo.com
-          </a>
-          <p className="mt-2.5 text-small text-text-muted">
-            Prefer email? Skip the form and write to me directly.
-          </p>
-        </div>
-      </section>
+              contact@liamthemo.com
+            </a>
 
-      <section className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
-        <div className="mx-auto max-w-[46rem] rounded-2xl border border-border bg-surface p-6 sm:p-10">
-          <QuoteForm initialService={topic} />
+            <div className="mt-5 border-t border-border pt-4">
+              <p className="text-caption text-text-muted">Elsewhere</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {externalSocialLinks.map((link) => (
+                  <a
+                    key={link.kind}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-[var(--radius-control)] border border-border px-3 text-metadata font-medium text-text-secondary transition-colors hover:border-accent hover:text-text"
+                  >
+                    <SocialIcon kind={link.kind} />
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+      </Section>
+
+      <Section spacing="compact" aria-labelledby="contact-form-heading">
+        <div className="grid gap-8 lg:grid-cols-[minmax(16rem,0.62fr)_minmax(0,1.38fr)] lg:gap-12">
+          <div>
+            <SectionHeader
+              id="contact-form-heading"
+              eyebrow="Send a message"
+              title="Start with the useful details"
+              description="A short description is enough. The form expands only when a field is relevant to what you selected."
+            />
+
+            <ul className="mt-6 space-y-3 text-body-secondary text-text-muted">
+              {[
+                "What you want to build, fix, improve, or understand",
+                "What already exists, if anything",
+                "Any constraints or timeline you already know",
+                "The best way to reach you back",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span aria-hidden="true" className="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-6 text-caption text-text-muted">
+              Prefer not to use a form? Email works just as well.
+            </p>
+          </div>
+
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 sm:p-8 lg:p-10">
+            <QuoteForm initialService={topic} />
+          </div>
+        </div>
+      </Section>
     </>
   );
 }
