@@ -20,6 +20,8 @@ function formatRepositoryDate(value: string) {
 
 export default async function GitHubActivitySection() {
   const activity = await getGitHubActivity();
+  const firstActivityDay = activity.activityDays[0];
+  const lastActivityDay = activity.activityDays[activity.activityDays.length - 1];
 
   return (
     <Section spacing="compact" aria-labelledby="github-activity-heading">
@@ -77,8 +79,8 @@ export default async function GitHubActivitySection() {
                 ))}
               </div>
               <div className="mt-2 flex justify-between text-caption text-text-muted" aria-hidden="true">
-                <span>{activity.activityDays[0]?.label}</span>
-                <span>{activity.activityDays.at(-1)?.label}</span>
+                <span>{firstActivityDay?.label}</span>
+                <span>{lastActivityDay?.label}</span>
               </div>
             </div>
 
