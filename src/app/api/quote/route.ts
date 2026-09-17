@@ -8,6 +8,11 @@ import {
   validateQuotePayload,
   type QuoteFormPayload,
 } from "@/lib/quote";
+import {
+  contentLengthExceeds,
+  hasJsonContentType,
+  isSameOriginRequest,
+} from "@/lib/request-security";
 
 /*
   The quote form's delivery handler (CLAUDE.md §8, build order step 6). This is
@@ -19,21 +24,38 @@ import {
   call that matters — if it fails, the lead is lost, so it is awaited and a
   failure surfaces to the visitor as an error.
 
-  (A Resend-based visitor auto-reply used to sit alongside this, sent
-  best-effort via `ctx.waitUntil`. Cut per owner decision — not worth the
-  extra dependency and domain verification for a "got your message"
-  courtesy email.)
-
-  Rate limiting is NOT implemented here on purpose. §8 is explicit: use
-  Cloudflare's own WAF rate-limiting rules on this path rather than an
-  in-Worker counter, so abusive traffic is stopped at the edge before it ever
-  reaches this code or counts against the daily request cap.
+  Rate limiting remains an edge concern. Cloudflare WAF/rate-limiting rules
+  should protect this path before traffic reaches the Worker; the checks below
+  add application-level request validation and same-origin protection.
 */
 
 const DISCORD_EMBED_FIELD_LIMIT = 1000;
+const MAX_QUOTE_REQUEST_BYTES = 16 * 1024;
+const DISCORD_REQUEST_TIMEOUT_MS = 10_000;
+const DISCORD_WEBHOOK_HOSTS = new Set(["discord.com", "discordapp.com"]);
 
 function truncate(value: string, limit: number): string {
   return value.length > limit ? `${value.slice(0, limit)}…` : value;
+}
+
+function validatedDiscordWebhookUrl(value: string): string {
+  let url: URL;
+
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error("Discord webhook is not a valid URL.");
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    !DISCORD_WEBHOOK_HOSTS.has(url.hostname) ||
+    !url.pathname.startsWith("/api/webhooks/")
+  ) {
+    throw new Error("Discord webhook destination is not allowed.");
+  }
+
+  return url.toString();
 }
 
 async function sendDiscordNotification(
@@ -44,10 +66,13 @@ async function sendDiscordNotification(
     ? `${contactMethodLabel(data.contactMethod)} — ${data.phone}`
     : contactMethodLabel(data.contactMethod);
 
-  const res = await fetch(webhookUrl, {
+  const res = await fetch(validatedDiscordWebhookUrl(webhookUrl), {
     method: "POST",
     headers: { "content-type": "application/json" },
+    redirect: "error",
+    signal: AbortSignal.timeout(DISCORD_REQUEST_TIMEOUT_MS),
     body: JSON.stringify({
+      allowed_mentions: { parse: [] },
       embeds: [
         {
           title: "New quote request",
@@ -79,6 +104,21 @@ async function sendDiscordNotification(
 }
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "Request not allowed." }, { status: 403 });
+  }
+
+  if (!hasJsonContentType(request)) {
+    return NextResponse.json(
+      { error: "Content-Type must be application/json." },
+      { status: 415 },
+    );
+  }
+
+  if (contentLengthExceeds(request, MAX_QUOTE_REQUEST_BYTES)) {
+    return NextResponse.json({ error: "Request is too large." }, { status: 413 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -117,10 +157,23 @@ export async function POST(request: Request) {
 
   const { env } = await getCloudflareContext({ async: true });
 
+  if (!env.DISCORD_WEBHOOK_URL) {
+    console.error("Quote form: Discord webhook is not configured");
+    return NextResponse.json(
+      {
+        error:
+          "Something went wrong sending your message. Try again, or email contact@liamthemo.com directly.",
+      },
+      { status: 503 },
+    );
+  }
+
   try {
     await sendDiscordNotification(env.DISCORD_WEBHOOK_URL, data);
-  } catch (err) {
-    console.error("Quote form: Discord notification failed", err);
+  } catch {
+    // Do not log the thrown error object. Network errors can include the
+    // webhook URL, which contains a secret token and must never enter logs.
+    console.error("Quote form: Discord notification failed");
     return NextResponse.json(
       {
         error:
