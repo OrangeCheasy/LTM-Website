@@ -3,6 +3,7 @@ import EducationSection from "@/components/EducationSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
 import GitHubActivitySection from "@/components/GitHubActivitySection";
+import OutsideTechSection from "@/components/OutsideTechSection";
 import ProfileHero from "@/components/ProfileHero";
 import SkillsSection from "@/components/SkillsSection";
 import WorkWithMeSection from "@/components/WorkWithMeSection";
@@ -63,6 +64,8 @@ export default function Home() {
       <EducationSection />
 
       <GitHubActivitySection />
+
+      <OutsideTechSection />
 
       <WorkWithMeSection />
     </>
