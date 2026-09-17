@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CTASection from "@/components/CTASection";
+import PageHero from "@/components/PageHero";
 import { LinkButton, Section, SectionHeader, Tag } from "@/components/ui";
 import { sortedEducation } from "@/data/education";
 import { orderedExperience } from "@/data/experience";
@@ -46,30 +47,22 @@ export default function AboutPage() {
 
   return (
     <>
-      <Section
-        spacing="compact"
-        aria-labelledby="about-heading"
-        className="border-b border-border/70"
-      >
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
-          <div>
-            <SectionHeader
-              id="about-heading"
-              eyebrow="About me"
-              headingLevel="h1"
-              title="I like building the whole thing"
-              description={profileContent.intro}
-            />
-            <div className="mt-7 flex flex-wrap gap-3">
-              <LinkButton href="/projects" variant="primary">
-                See my work
-              </LinkButton>
-              <LinkButton href="/experience" variant="secondary">
-                Experience
-              </LinkButton>
-            </div>
-          </div>
-
+      <PageHero
+        id="about-heading"
+        eyebrow="About me"
+        title="I like building the whole thing"
+        description={profileContent.intro}
+        actions={
+          <>
+            <LinkButton href="/projects" variant="primary">
+              See my work
+            </LinkButton>
+            <LinkButton href="/experience" variant="secondary">
+              Experience
+            </LinkButton>
+          </>
+        }
+        aside={
           <dl className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
             <div className="p-5">
               <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Based in</dt>
@@ -87,8 +80,8 @@ export default function AboutPage() {
               <dd className="mt-2 text-body font-medium text-text">{currentRoles.length}</dd>
             </div>
           </dl>
-        </div>
-      </Section>
+        }
+      />
 
       <Section spacing="compact" aria-labelledby="principles-heading">
         <SectionHeader

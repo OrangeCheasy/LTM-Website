@@ -2,10 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CTASection from "@/components/CTASection";
 import CoverArt from "@/components/CoverArt";
+import PageHero from "@/components/PageHero";
 import ProjectCard from "@/components/ProjectCard";
 import { LinkButton, Section, SectionHeader, Tag } from "@/components/ui";
 import { projects } from "@/data/projects";
-import { SERVICE_META, type Project } from "@/lib/types";
+import {
+  countProjectTags,
+  projectCategoryLabel,
+  projectTags,
+} from "@/lib/project-display";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -14,24 +19,19 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects" },
   openGraph: {
     type: "website",
+    url: "/projects",
     title: "Projects — Liam Mo",
     description:
       "Selected software, game development, automation, and technical projects by Liam Mo.",
   },
 };
 
-function projectCategory(project: Project) {
-  return project.services.length > 0
-    ? project.services.map((slug) => SERVICE_META[slug].title).join(" · ")
-    : (project.skills ?? []).join(" · ");
-}
-
 export default function ProjectsPage() {
   const featuredProject = projects.find((project) => project.featured) ?? projects[0];
   const remainingProjects = featuredProject
     ? projects.filter((project) => project.slug !== featuredProject.slug)
     : projects;
-  const technologyCount = new Set(projects.flatMap((project) => project.stack)).size;
+  const tagCount = countProjectTags(projects);
   const featuredCount = projects.filter((project) => project.featured).length;
   const eagerIndex = remainingProjects.findIndex(
     (project) => project.cover.kind === "image",
@@ -39,20 +39,13 @@ export default function ProjectsPage() {
 
   return (
     <>
-      <Section
-        spacing="compact"
-        aria-labelledby="projects-heading"
-        className="border-b border-border/70"
-      >
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-12">
-          <SectionHeader
-            id="projects-heading"
-            eyebrow="Portfolio"
-            headingLevel="h1"
-            title="Projects built from idea to working system"
-            description="A closer look at the software, games, automation, and technical work I’ve designed, built, deployed, or helped grow."
-          />
-
+      <PageHero
+        id="projects-heading"
+        eyebrow="Portfolio"
+        title="Projects built from idea to working system"
+        description="A closer look at the software, games, automation, and technical work I’ve designed, built, deployed, or helped grow."
+        asideSize="wide"
+        aside={
           <dl className="grid grid-cols-3 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
             <div className="p-4 sm:p-5">
               <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Projects</dt>
@@ -63,12 +56,12 @@ export default function ProjectsPage() {
               <dd className="mt-2 text-card text-text">{featuredCount}</dd>
             </div>
             <div className="border-l border-border p-4 sm:p-5">
-              <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Tools</dt>
-              <dd className="mt-2 text-card text-text">{technologyCount}</dd>
+              <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Tags</dt>
+              <dd className="mt-2 text-card text-text">{tagCount}</dd>
             </div>
           </dl>
-        </div>
-      </Section>
+        }
+      />
 
       {featuredProject ? (
         <Section spacing="compact" aria-labelledby="featured-project-heading">
@@ -79,7 +72,12 @@ export default function ProjectsPage() {
               title={featuredProject.title}
               description="Start here for a detailed look at the problem, build decisions, implementation, and available results."
             />
-            <LinkButton href={`/projects/${featuredProject.slug}`} variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <LinkButton
+              href={`/projects/${featuredProject.slug}`}
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
               Open case study
             </LinkButton>
           </div>
@@ -102,9 +100,9 @@ export default function ProjectsPage() {
 
               <div className="flex flex-col justify-between p-[var(--space-card)] sm:p-8">
                 <div>
-                  {projectCategory(featuredProject) ? (
+                  {projectCategoryLabel(featuredProject) ? (
                     <p className="text-metadata font-semibold text-accent">
-                      {projectCategory(featuredProject)}
+                      {projectCategoryLabel(featuredProject)}
                     </p>
                   ) : null}
                   <h2 className="mt-3 text-section text-text">{featuredProject.title}</h2>
@@ -112,9 +110,9 @@ export default function ProjectsPage() {
                     {featuredProject.summary}
                   </p>
 
-                  <div className="mt-6 flex flex-wrap gap-2" aria-label="Technologies">
-                    {featuredProject.stack.map((technology) => (
-                      <Tag key={technology}>{technology}</Tag>
+                  <div className="mt-6 flex flex-wrap gap-2" aria-label="Project tags">
+                    {projectTags(featuredProject).map((tag) => (
+                      <Tag key={tag}>{tag}</Tag>
                     ))}
                   </div>
                 </div>
@@ -135,7 +133,11 @@ export default function ProjectsPage() {
       ) : null}
 
       {remainingProjects.length > 0 ? (
-        <Section spacing="compact" aria-labelledby="all-projects-heading" className="border-t border-border/70">
+        <Section
+          spacing="compact"
+          aria-labelledby="all-projects-heading"
+          className="border-t border-border/70"
+        >
           <SectionHeader
             id="all-projects-heading"
             eyebrow="More work"
