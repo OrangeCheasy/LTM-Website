@@ -3,6 +3,11 @@ const GITHUB_API_BASE = "https://api.github.com";
 const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
 const GITHUB_CONTRIBUTIONS_URL = `https://github.com/users/${GITHUB_USERNAME}/contributions`;
 const GITHUB_REVALIDATE_SECONDS = 60 * 60;
+const FEATURED_REPOSITORY_NAMES = [
+  "LTM-Email-Service",
+  "LTM-Website",
+  "HYSB-Bazaar-Tracker",
+] as const;
 
 const githubHeaders = {
   Accept: "application/vnd.github+json",
@@ -53,7 +58,7 @@ export interface GitHubActivityData {
   followerCount: number | null;
   contributionCount: number | null;
   contributionDays: readonly GitHubContributionDay[];
-  recentRepositories: readonly GitHubPublicRepository[];
+  featuredRepositories: readonly GitHubPublicRepository[];
   hasLiveData: boolean;
 }
 
@@ -174,17 +179,19 @@ async function fetchContributionCalendar() {
 }
 
 export async function getGitHubActivity(): Promise<GitHubActivityData> {
-  const [profile, repositories, calendar] = await Promise.all([
+  const [profile, repositoryResults, calendar] = await Promise.all([
     fetchGitHub<GitHubProfileResponse>(`/users/${GITHUB_USERNAME}`),
-    fetchGitHub<GitHubRepositoryResponse[]>(
-      `/users/${GITHUB_USERNAME}/repos?type=owner&sort=pushed&direction=desc&per_page=8`,
+    Promise.all(
+      FEATURED_REPOSITORY_NAMES.map((repositoryName) =>
+        fetchGitHub<GitHubRepositoryResponse>(`/repos/${GITHUB_USERNAME}/${repositoryName}`),
+      ),
     ),
     fetchContributionCalendar(),
   ]);
 
-  const recentRepositories = (repositories ?? [])
-    .filter((repository) => !repository.fork && !repository.archived)
-    .slice(0, 3)
+  const featuredRepositories = repositoryResults
+    .filter((repository): repository is GitHubRepositoryResponse => Boolean(repository))
+    .filter((repository) => !repository.archived)
     .map((repository) => ({
       id: repository.id,
       name: repository.name,
@@ -202,7 +209,7 @@ export async function getGitHubActivity(): Promise<GitHubActivityData> {
     followerCount: profile?.followers ?? null,
     contributionCount: calendar?.contributionCount ?? null,
     contributionDays: calendar?.contributionDays ?? [],
-    recentRepositories,
-    hasLiveData: Boolean(profile || repositories || calendar?.contributionDays.length),
+    featuredRepositories,
+    hasLiveData: Boolean(profile || featuredRepositories.length || calendar?.contributionDays.length),
   };
 }
