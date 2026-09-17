@@ -1,8 +1,8 @@
 import Link from "next/link";
 import CoverArt from "@/components/CoverArt";
 import { Tag } from "@/components/ui";
+import { projectCategoryLabel, projectTags } from "@/lib/project-display";
 import type { Project } from "@/lib/types";
-import { SERVICE_META } from "@/lib/types";
 
 export default function ProjectCard({
   project,
@@ -11,10 +11,8 @@ export default function ProjectCard({
   project: Project;
   priority?: boolean;
 }) {
-  const category =
-    project.services.length > 0
-      ? project.services.map((slug) => SERVICE_META[slug].title).join(" · ")
-      : (project.skills ?? []).join(" · ");
+  const category = projectCategoryLabel(project);
+  const tags = projectTags(project);
 
   return (
     <li>
@@ -42,9 +40,9 @@ export default function ProjectCard({
             {project.summary}
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
-            {project.stack.slice(0, 4).map((technology) => (
-              <Tag key={technology}>{technology}</Tag>
+          <div className="mt-5 flex flex-wrap gap-2" aria-label="Project tags">
+            {tags.slice(0, 4).map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
             ))}
           </div>
 
