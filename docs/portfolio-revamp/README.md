@@ -2,7 +2,7 @@
 
 ## Goal
 
-Rebuild liamthemo.com from a service-first landing page into a polished personal developer portfolio centered on Liam, his work, experience, technical skills, education, GitHub activity, and contact paths.
+Rebuild liamthemo.com from a service-first landing page into a polished personal developer portfolio centered on Liam, his work, experience, technical skills, education, GitHub activity, personal interests, and contact paths.
 
 The homepage should feel intentionally designed as one system. Typography, color, spacing, iconography, section widths, buttons, cards, borders, and motion should come from shared tokens/components instead of per-section improvisation.
 
@@ -44,13 +44,15 @@ Supporting specialties can appear in copy and project tags, for example:
    - icon + readable technology name
 6. Education
    - school, program, dates/status, location
-   - `Outside the Tech` -> `/about#outside-tech`
 7. GitHub Activity
    - live/recent public GitHub contribution/activity data
    - link to GitHub profile
-8. Work With Me
+8. Outside the Tech
+   - concise personal context
+   - swipeable personal photo gallery
+9. Work With Me
    - compact CTA into `/contact`
-9. Footer
+10. Footer
    - full name
    - Calgary, Alberta
    - social links
@@ -101,6 +103,6 @@ The current `/portfolio` route should remain compatible through a permanent redi
 - Exact LinkedIn profile URL.
 - Final three featured projects and their preferred cover art.
 - Final experience and education wording/dates.
-- Hobbies/interests for `Outside the Tech`.
+- Additional approved personal photos and alt text for `Outside the Tech`.
 
 These inputs should not block the structural implementation. Components and data models can be completed first using clearly labeled temporary content.

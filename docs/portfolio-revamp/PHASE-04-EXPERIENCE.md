@@ -19,16 +19,23 @@ The homepage should prioritize the most relevant/recent entries and keep detail 
 
 ## Visual Structure
 
+Experience should be grouped by workplace rather than rendered as one global timeline.
+
+Each organization gets its own visual group and its own timeline. Multiple roles at the same organization stay connected so promotions and role progression read as one employment history. Roles from different organizations must never share a continuous timeline rail.
+
 Recommended desktop pattern:
 
-- left column: dates/location metadata
-- right column: role, organization, summary
-- subtle row dividers or timeline treatment
+- workplace label at the start of each group
+- role dates/location as metadata
+- role title and summary as primary content
+- a timeline rail only within workplaces that contain multiple roles
+- clear vertical separation between workplaces
 
 Recommended mobile pattern:
 
+- the same workplace grouping as desktop
 - stacked metadata above role content
-- no narrow timeline rail that wastes horizontal space
+- compact timeline spacing that does not waste horizontal space
 
 The section should feel editorial and resume-like rather than card-heavy.
 
@@ -42,7 +49,8 @@ Destination: `/experience`
 
 The expanded route can include:
 
-- full role history
+- full role history grouped by workplace
+- connected role progression only within the same workplace
 - responsibilities
 - measurable outcomes where available
 - leadership/supervision experience
@@ -68,9 +76,13 @@ Suggested fields:
 - `featured`
 - `sortOrder`
 
+Entries with the same organization value should be grouped together by the shared experience renderer while preserving the overall organization order established by the sorted data.
+
 ## Acceptance Criteria
 
 - Date, role, organization, and location are immediately scannable.
+- Different workplaces have separate timeline groups.
+- Multiple roles at the same workplace remain visually connected.
 - Homepage entries stay concise.
 - `View Details` leads to `/experience`.
 - Same experience data powers both homepage and detail route.
