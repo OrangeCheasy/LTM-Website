@@ -21,6 +21,7 @@ This document tracks the final Phase 9 release state for the portfolio revamp.
 - Contact copy/metadata is aligned to collaboration and portfolio language rather than the old service-first homepage.
 - Favicon/icon route assets are present under `src/app`.
 - Education content is confirmed and published for Ernest Manning High School and Mount Royal University, including dates, program status, location, and relevant coursework.
+- Experience content is confirmed and published as a vertical role timeline for AuStudio, Hello Nori, and freelance computer-tech work, including the Server-to-Supervisor promotion path.
 
 ## Intentional indexing hold
 
@@ -31,9 +32,8 @@ The following inputs are still required before the homepage should switch to `in
 - approved profile photo
 - current public resume asset/content
 - exact LinkedIn profile URL
-- confirmed experience role wording, dates, locations, and outcomes
 
-The resume route remains `noindex` while the PDF/content is pending. The experience route indexes only after at least one confirmed public experience entry exists. Sitemap generation mirrors those decisions.
+The resume route remains `noindex` while the PDF/content is pending. The experience route is now indexable because confirmed public experience entries exist, and sitemap generation mirrors that state.
 
 ## Infrastructure/manual validation still required
 
@@ -49,4 +49,4 @@ The resume route remains `noindex` while the PDF/content is pending. The experie
 
 ## Launch rule
 
-Do not remove the homepage `noindex` flag merely to satisfy a checklist. Indexing should be enabled only after the remaining owner-supplied profile/resume/social/experience content is finalized and the live production validation passes.
+Do not remove the homepage `noindex` flag merely to satisfy a checklist. Indexing should be enabled only after the remaining owner-supplied profile/resume/social content is finalized and the live production validation passes.
