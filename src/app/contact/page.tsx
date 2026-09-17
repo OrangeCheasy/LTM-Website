@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageHero from "@/components/PageHero";
 import QuoteForm from "@/components/QuoteForm";
 import SocialIcon from "@/components/SocialIcon";
 import { Section, SectionHeader } from "@/components/ui";
@@ -48,20 +49,12 @@ export default async function ContactPage({
 
   return (
     <>
-      <Section
-        spacing="compact"
-        aria-labelledby="contact-heading"
-        className="border-b border-border/70"
-      >
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
-          <SectionHeader
-            id="contact-heading"
-            eyebrow="Contact"
-            headingLevel="h1"
-            title={heading}
-            description={description}
-          />
-
+      <PageHero
+        id="contact-heading"
+        eyebrow="Contact"
+        title={heading}
+        description={description}
+        aside={
           <div className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)]">
             <p className="text-caption uppercase tracking-[0.12em] text-text-muted">Direct contact</p>
             <a
@@ -89,8 +82,8 @@ export default async function ContactPage({
               </div>
             </div>
           </div>
-        </div>
-      </Section>
+        }
+      />
 
       <Section spacing="compact" aria-labelledby="contact-form-heading">
         <div className="grid gap-8 lg:grid-cols-[minmax(16rem,0.62fr)_minmax(0,1.38fr)] lg:gap-12">

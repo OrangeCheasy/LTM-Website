@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CTASection from "@/components/CTASection";
+import PageHero from "@/components/PageHero";
 import { LinkButton, Section, SectionHeader, Tag } from "@/components/ui";
 import { sortedEducation } from "@/data/education";
 import { orderedExperience } from "@/data/experience";
@@ -46,30 +47,22 @@ export default function AboutPage() {
 
   return (
     <>
-      <Section
-        spacing="compact"
-        aria-labelledby="about-heading"
-        className="border-b border-border/70"
-      >
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-12">
-          <div>
-            <SectionHeader
-              id="about-heading"
-              eyebrow="About me"
-              headingLevel="h1"
-              title="I like building the whole thing"
-              description={profileContent.intro}
-            />
-            <div className="mt-7 flex flex-wrap gap-3">
-              <LinkButton href="/projects" variant="primary">
-                See my work
-              </LinkButton>
-              <LinkButton href="/experience" variant="secondary">
-                Experience
-              </LinkButton>
-            </div>
-          </div>
-
+      <PageHero
+        id="about-heading"
+        eyebrow="About me"
+        title="I like building the whole thing"
+        description={profileContent.intro}
+        actions={
+          <>
+            <LinkButton href="/projects" variant="primary">
+              See my work
+            </LinkButton>
+            <LinkButton href="/experience" variant="secondary">
+              Experience
+            </LinkButton>
+          </>
+        }
+        aside={
           <dl className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
             <div className="p-5">
               <dt className="text-caption uppercase tracking-[0.12em] text-text-muted">Based in</dt>
@@ -87,8 +80,8 @@ export default function AboutPage() {
               <dd className="mt-2 text-body font-medium text-text">{currentRoles.length}</dd>
             </div>
           </dl>
-        </div>
-      </Section>
+        }
+      />
 
       <Section spacing="compact" aria-labelledby="principles-heading">
         <SectionHeader
@@ -105,7 +98,7 @@ export default function AboutPage() {
               className="rounded-[var(--radius-card)] border border-border bg-surface p-[var(--space-card)]"
             >
               <span className="text-metadata font-semibold text-accent">0{index + 1}</span>
-              <h2 className="mt-4 text-card text-text">{principle.title}</h2>
+              <h3 className="mt-4 text-card text-text">{principle.title}</h3>
               <p className="mt-3 text-body-secondary text-text-muted">{principle.description}</p>
             </article>
           ))}
@@ -128,7 +121,7 @@ export default function AboutPage() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12">
           <div>
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-card text-text">Current work</h2>
+              <h3 className="text-card text-text">Current work</h3>
               <Link href="/experience" className="text-caption font-medium text-accent hover:text-accent-hover">
                 Full experience →
               </Link>
@@ -146,7 +139,7 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-card text-text">Technologies & tools</h2>
+            <h3 className="text-card text-text">Technologies & tools</h3>
             <p className="mt-2 max-w-[58ch] text-body-secondary text-text-muted">
               The shared skills list stays limited to technologies supported by work, education, or project evidence elsewhere on the site.
             </p>

@@ -5,10 +5,12 @@ import { notFound } from "next/navigation";
 import BeforeAfterCompare from "@/components/BeforeAfterCompare";
 import CTASection from "@/components/CTASection";
 import CoverArt from "@/components/CoverArt";
+import PageHero from "@/components/PageHero";
 import ScreenshotCarousel from "@/components/ScreenshotCarousel";
 import { Card, LinkButton, Section, SectionHeader, Tag } from "@/components/ui";
 import { projects } from "@/data/projects";
-import { SERVICE_META, type Project, type ProjectFeature } from "@/lib/types";
+import { projectCategoryLabel, projectTags } from "@/lib/project-display";
+import type { ProjectFeature } from "@/lib/types";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -16,12 +18,6 @@ export function generateStaticParams() {
 
 function findProject(slug: string) {
   return projects.find((project) => project.slug === slug);
-}
-
-function projectCategory(project: Project) {
-  return project.services.length > 0
-    ? project.services.map((slug) => SERVICE_META[slug].title).join(" · ")
-    : (project.skills ?? []).join(" · ");
 }
 
 function FeatureIcon({ icon }: { icon: ProjectFeature["icon"] }) {
@@ -86,87 +82,73 @@ export default async function ProjectPage({
   const project = findProject(slug);
   if (!project) notFound();
 
-  const category = projectCategory(project);
+  const category = projectCategoryLabel(project);
+  const tags = projectTags(project);
   const projectIndex = projects.findIndex((item) => item.slug === project.slug);
   const previousProject = projectIndex > 0 ? projects[projectIndex - 1] : null;
   const nextProject = projectIndex < projects.length - 1 ? projects[projectIndex + 1] : null;
 
   return (
     <>
-      <Section
-        spacing="compact"
-        aria-labelledby="project-heading"
-        className="border-b border-border/70"
-      >
-        <Link
-          href="/projects"
-          className="inline-flex items-center gap-2 text-metadata font-medium text-text-muted transition-colors hover:text-accent"
-        >
-          <span aria-hidden="true">←</span>
-          All projects
-        </Link>
-
-        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-12">
-          <div>
-            {category ? (
-              <p className="text-metadata font-semibold text-accent">{category}</p>
+      <PageHero
+        id="project-heading"
+        eyebrow={category || "Project"}
+        title={
+          <span className="inline-flex items-center gap-3">
+            {project.avatar ? (
+              <Image
+                src={project.avatar.src}
+                alt=""
+                width={48}
+                height={48}
+                className="h-12 w-12 shrink-0 rounded-full border border-border object-cover"
+              />
             ) : null}
-
-            <div className="mt-3 flex items-center gap-3">
-              {project.avatar ? (
-                <Image
-                  src={project.avatar.src}
-                  alt={project.avatar.alt}
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 shrink-0 rounded-full border border-border object-cover"
-                />
+            <span>{project.title}</span>
+          </span>
+        }
+        description={project.summary}
+        backLink={{ href: "/projects", label: "All projects" }}
+        asideSize="wide"
+        actions={
+          project.externalLink || project.sourceUrl ? (
+            <>
+              {project.externalLink ? (
+                <LinkButton
+                  href={project.externalLink.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  variant="primary"
+                >
+                  {project.externalLink.label}
+                  <span aria-hidden="true">↗</span>
+                </LinkButton>
               ) : null}
-              <h1 id="project-heading" className="max-w-[18ch] text-page text-text">
-                {project.title}
-              </h1>
-            </div>
-
-            <p className="mt-5 max-w-[58ch] text-body text-text-muted">{project.summary}</p>
-
-            {project.externalLink || project.sourceUrl ? (
-              <div className="mt-7 flex flex-wrap gap-3">
-                {project.externalLink ? (
-                  <LinkButton
-                    href={project.externalLink.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant="primary"
-                  >
-                    {project.externalLink.label}
-                    <span aria-hidden="true">↗</span>
-                  </LinkButton>
-                ) : null}
-                {project.sourceUrl ? (
-                  <LinkButton
-                    href={project.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant="secondary"
-                  >
-                    View source
-                    <span aria-hidden="true">↗</span>
-                  </LinkButton>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-
+              {project.sourceUrl ? (
+                <LinkButton
+                  href={project.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  variant="secondary"
+                >
+                  View source
+                  <span aria-hidden="true">↗</span>
+                </LinkButton>
+              ) : null}
+            </>
+          ) : undefined
+        }
+        aside={
           <div className="relative aspect-[3/2] overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface-2">
             <CoverArt
               project={project}
               priority={project.cover.kind === "image"}
               decorative
-              sizes="(min-width: 1024px) 56vw, 100vw"
+              sizes="(min-width: 1024px) 42vw, 100vw"
             />
           </div>
-        </div>
-      </Section>
+        }
+      />
 
       <Section spacing="compact" aria-labelledby="case-study-heading">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12">
@@ -179,11 +161,11 @@ export default async function ProjectPage({
             />
 
             <div className="mt-8 grid gap-4 md:grid-cols-2">
-              <Card className="p-[var(--space-card)]">
+              <Card>
                 <p className="text-metadata font-semibold text-accent">Challenge</p>
                 <p className="mt-3 text-body-secondary text-text-muted">{project.problem}</p>
               </Card>
-              <Card className="p-[var(--space-card)]">
+              <Card>
                 <p className="text-metadata font-semibold text-accent">Approach</p>
                 <p className="mt-3 text-body-secondary text-text-muted">{project.solution}</p>
               </Card>
@@ -238,10 +220,10 @@ export default async function ProjectPage({
             </dl>
 
             <div className="mt-6 border-t border-border pt-5">
-              <p className="text-caption uppercase tracking-[0.1em] text-text-muted">Stack</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {project.stack.map((technology) => (
-                  <Tag key={technology}>{technology}</Tag>
+              <p className="text-caption uppercase tracking-[0.1em] text-text-muted">Tools & technologies</p>
+              <div className="mt-3 flex flex-wrap gap-2" aria-label="Project tags">
+                {tags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
                 ))}
               </div>
             </div>
@@ -326,7 +308,7 @@ export default async function ProjectPage({
         </Section>
       ) : null}
 
-      {(previousProject || nextProject) ? (
+      {previousProject || nextProject ? (
         <Section spacing="compact" aria-labelledby="project-navigation-heading" className="border-t border-border/70">
           <h2 id="project-navigation-heading" className="sr-only">More projects</h2>
           <div className="grid gap-3 sm:grid-cols-2">

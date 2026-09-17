@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Card, LinkButton, Section, SectionHeader } from "@/components/ui";
+import PageHero from "@/components/PageHero";
+import { Card, LinkButton, Section } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Resume",
@@ -10,28 +11,32 @@ export const metadata: Metadata = {
 
 export default function ResumePage() {
   return (
-    <Section>
-      <SectionHeader
-        headingLevel="h1"
+    <>
+      <PageHero
+        id="resume-heading"
         eyebrow="Resume"
         title="Liam Mo — Software Developer"
         description="The public resume file is being finalized. This route is stable so the homepage action and future PDF can keep the same destination."
+        actions={
+          <>
+            <LinkButton href="/projects" variant="primary">
+              View projects
+            </LinkButton>
+            <LinkButton href="/contact" variant="secondary">
+              Contact me
+            </LinkButton>
+          </>
+        }
       />
 
-      <Card className="mt-10 max-w-[var(--layout-reading)]">
-        <h2 className="text-card text-text">Resume asset pending</h2>
-        <p className="mt-3 text-body-secondary text-text-muted">
-          The final PDF has not been added to the repository yet. In the meantime, you can review current projects or get in touch directly.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <LinkButton href="/projects" variant="secondary" size="sm">
-            View Projects
-          </LinkButton>
-          <LinkButton href="/contact" variant="ghost" size="sm">
-            Contact
-          </LinkButton>
-        </div>
-      </Card>
-    </Section>
+      <Section spacing="compact" containerSize="narrow" aria-labelledby="resume-status-heading">
+        <Card>
+          <h2 id="resume-status-heading" className="text-card text-text">Resume asset pending</h2>
+          <p className="mt-3 text-body-secondary text-text-muted">
+            The final PDF has not been added to the repository yet. In the meantime, the projects and experience pages contain the current public detail.
+          </p>
+        </Card>
+      </Section>
+    </>
   );
 }
