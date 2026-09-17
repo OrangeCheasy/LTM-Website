@@ -39,6 +39,8 @@ export default function PageHero({
   backLink,
   className,
 }: PageHeroProps) {
+  const hasAside = Boolean(aside);
+
   return (
     <Section
       spacing="compact"
@@ -58,8 +60,8 @@ export default function PageHero({
       <div
         className={cn(
           backLink && "mt-6",
-          aside && "grid gap-8 lg:items-end lg:gap-12",
-          aside && asideGridClasses[asideSize],
+          hasAside && "grid gap-8 lg:items-end lg:gap-12",
+          hasAside && asideGridClasses[asideSize],
         )}
       >
         <div>
