@@ -21,7 +21,7 @@ export default async function GitHubActivitySection() {
           id="github-activity-heading"
           eyebrow="Open source"
           title="GitHub Activity"
-          description="Public contribution activity and recently pushed repositories, fetched server-side from GitHub."
+          description="Public contribution activity and selected repositories, fetched server-side from GitHub."
         />
         <LinkButton
           href={activity.profileUrl}
@@ -79,13 +79,13 @@ export default async function GitHubActivitySection() {
 
             <div>
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-card text-text">Recently pushed public repositories</h3>
-                <span className="text-caption text-text-muted">GitHub public data</span>
+                <h3 className="text-card text-text">Featured repositories</h3>
+                <span className="text-caption text-text-muted">Selected projects</span>
               </div>
 
-              {activity.recentRepositories.length > 0 ? (
+              {activity.featuredRepositories.length > 0 ? (
                 <div className="mt-4 grid gap-3">
-                  {activity.recentRepositories.map((repository) => (
+                  {activity.featuredRepositories.map((repository) => (
                     <a
                       key={repository.id}
                       href={repository.url}
@@ -114,8 +114,8 @@ export default async function GitHubActivitySection() {
               ) : (
                 <Card className="mt-4">
                   <p className="text-body-secondary text-text-muted">
-                    Repository details are temporarily unavailable. Visit the GitHub profile for the
-                    current public repository list.
+                    Featured repository details are temporarily unavailable. Visit the GitHub profile
+                    for the current public repository list.
                   </p>
                 </Card>
               )}
