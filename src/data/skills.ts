@@ -9,25 +9,28 @@ export type SkillCategory =
 
 export type SkillIconKey =
   | "typescript"
-  | "javascript"
-  | "cplusplus"
   | "react"
   | "nextjs"
   | "tailwind"
   | "cloudflare"
   | "github"
   | "python"
-  | "assembly68k"
   | "luau"
-  | "mysql"
   | "excel"
   | "roblox"
   | "rojo";
 
+export type SkillMarqueeIconKey =
+  | SkillIconKey
+  | "javascript"
+  | "cplusplus"
+  | "assembly68k"
+  | "mysql";
+
 export interface Skill {
   name: string;
   category: SkillCategory;
-  icon: SkillIconKey;
+  icon: SkillMarqueeIconKey;
   url?: string;
   featured?: boolean;
 }
