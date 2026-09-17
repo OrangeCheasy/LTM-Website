@@ -11,8 +11,8 @@ The site is currently being rebuilt from its older service-first layout into a p
 | Item | Value |
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
-| Current major branch | `v2.08` |
-| Current phase | Phase 8 — Work With Me, Footer & Visitor Count |
+| Current major branch | `v2.09` |
+| Current phase | Phase 9 — Accessibility, SEO, Performance & Launch Audit |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.
@@ -33,7 +33,7 @@ Each portfolio phase maps to a `v0.01` version increment:
 | 8 | `v2.08` | Work With Me, footer, visitor statistic |
 | 9 | `v2.09` | Accessibility, SEO, performance, launch audit |
 
-The detailed implementation plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/).
+The detailed implementation plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/). The current launch state and remaining manual blockers are tracked in [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md).
 
 ## Git workflow
 
@@ -126,6 +126,7 @@ Start with:
 
 - [`docs/portfolio-revamp/README.md`](./docs/portfolio-revamp/README.md) — master redesign plan and homepage order
 - [`docs/portfolio-revamp/CURRENT-STATE-AUDIT.md`](./docs/portfolio-revamp/CURRENT-STATE-AUDIT.md) — current-site audit
+- [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md) — final launch readiness and manual blockers
 - `docs/portfolio-revamp/PHASE-XX-*.md` — phase-specific scope, implementation guidance, and acceptance criteria
 
 Legacy mockups and the old `CLAUDE.md`, `DEPLOYMENT.md`, and `TODO.md` documents have intentionally been removed. Do not use or recreate them as project specifications.

@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Experience",
   description: "Professional, leadership, and software project experience for Liam Mo.",
   alternates: { canonical: "/experience" },
+  robots: { index: orderedExperience.length > 0, follow: true },
   openGraph: {
     type: "website",
     title: "Experience — Liam Mo",

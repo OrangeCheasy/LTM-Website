@@ -4,6 +4,8 @@ import { Card, LinkButton, Section, SectionHeader } from "@/components/ui";
 export const metadata: Metadata = {
   title: "Resume",
   description: "Resume and professional background for Liam Mo.",
+  alternates: { canonical: "/resume" },
+  robots: { index: false, follow: true },
 };
 
 export default function ResumePage() {

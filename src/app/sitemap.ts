@@ -1,22 +1,24 @@
 import type { MetadataRoute } from "next";
+import { orderedExperience } from "@/data/experience";
 import { projects } from "@/data/projects";
-import { serviceSlugs } from "@/data/services";
 
 const BASE_URL = "https://liamthemo.com";
 
 /*
-  Static sitemap — every route here is prerendered, so generating this at
-  build time costs nothing extra.
-
-  `/` is deliberately left out while the homepage remains noindex during the
-  staged revamp. Phase 9 will reconcile indexing across the whole site.
+  Keep the sitemap focused on routes that are intentionally indexable. The
+  homepage and resume remain omitted while their final launch inputs are
+  pending, and Experience is included only after real public entries exist.
 */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["/projects", "/experience", "/about", "/contact"];
-  const serviceRoutes = serviceSlugs.map((slug) => `/services/${slug}`);
+  const staticRoutes = [
+    "/projects",
+    "/about",
+    "/contact",
+    ...(orderedExperience.length > 0 ? ["/experience"] : []),
+  ];
   const projectRoutes = projects.map((project) => `/projects/${project.slug}`);
 
-  return [...staticRoutes, ...serviceRoutes, ...projectRoutes].map((path) => ({
+  return [...staticRoutes, ...projectRoutes].map((path) => ({
     url: `${BASE_URL}${path}`,
     lastModified: new Date(),
   }));
