@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
+import { isSameOriginRequest } from "@/lib/request-security";
 
 const VISITOR_COOKIE = "ltm_visitor_seen";
 const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -20,6 +21,18 @@ function unavailableResponse() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json(
+      { count: null },
+      {
+        status: 403,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
+  }
+
   try {
     const { env } = await getCloudflareContext({ async: true });
     const db = env.VISITOR_DB;
@@ -68,8 +81,11 @@ export async function POST(request: NextRequest) {
     }
 
     return response;
-  } catch (error) {
-    console.error("Visitor counter failed", error);
+  } catch {
+    // Avoid logging raw database/Cloudflare errors from a public endpoint. The
+    // counter is non-critical and intentionally degrades without exposing
+    // deployment details to logs or visitors.
+    console.error("Visitor counter failed");
     return unavailableResponse();
   }
 }

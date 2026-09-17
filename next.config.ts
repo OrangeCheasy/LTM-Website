@@ -1,7 +1,29 @@
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-DNS-Prefetch-Control", value: "off" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  {
+    key: "Permissions-Policy",
+    value:
+      "browsing-topics=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+  },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
+  },
+
   // Keep legacy URLs useful while standardizing the public information
   // architecture around the developer portfolio. The portfolio detail
   // redirect only matches one path segment, so image assets under
