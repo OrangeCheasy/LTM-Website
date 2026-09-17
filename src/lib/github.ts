@@ -1,8 +1,8 @@
 const GITHUB_USERNAME = "OrangeCheasy";
 const GITHUB_API_BASE = "https://api.github.com";
 const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
+const GITHUB_CONTRIBUTIONS_URL = `https://github.com/users/${GITHUB_USERNAME}/contributions`;
 const GITHUB_REVALIDATE_SECONDS = 60 * 60;
-const ACTIVITY_DAY_COUNT = 14;
 
 const githubHeaders = {
   Accept: "application/vnd.github+json",
@@ -29,17 +29,11 @@ interface GitHubRepositoryResponse {
   pushed_at: string;
 }
 
-interface GitHubEventResponse {
-  id: string;
-  type: string;
-  created_at: string;
-}
-
-export interface GitHubActivityDay {
+export interface GitHubContributionDay {
   date: string;
-  label: string;
-  count: number;
+  count: number | null;
   level: 0 | 1 | 2 | 3 | 4;
+  description: string;
 }
 
 export interface GitHubPublicRepository {
@@ -57,8 +51,8 @@ export interface GitHubActivityData {
   profileUrl: string;
   publicRepoCount: number | null;
   followerCount: number | null;
-  recentEventCount: number;
-  activityDays: readonly GitHubActivityDay[];
+  contributionCount: number | null;
+  contributionDays: readonly GitHubContributionDay[];
   recentRepositories: readonly GitHubPublicRepository[];
   hasLiveData: boolean;
 }
@@ -80,74 +74,113 @@ async function fetchGitHub<T>(path: string): Promise<T | null> {
   }
 }
 
-function dateKey(date: Date) {
-  return date.toISOString().slice(0, 10);
+function decodeHtml(value: string) {
+  return value
+    .replaceAll("&amp;", "&")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
 }
 
-function formatDayLabel(date: Date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(date);
+function textContent(value: string) {
+  return decodeHtml(value.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim());
 }
 
-function activityLevel(count: number, maximum: number): 0 | 1 | 2 | 3 | 4 {
-  if (count === 0 || maximum === 0) return 0;
-
-  const ratio = count / maximum;
-  if (ratio <= 0.25) return 1;
-  if (ratio <= 0.5) return 2;
-  if (ratio <= 0.75) return 3;
-  return 4;
+function attribute(tag: string, name: string) {
+  const match = tag.match(new RegExp(`${name}=["']([^"']+)["']`, "i"));
+  return match?.[1] ?? null;
 }
 
-function buildActivityDays(events: readonly GitHubEventResponse[]) {
-  const now = new Date();
-  const counts = new Map<string, number>();
-
-  for (const event of events) {
-    const key = dateKey(new Date(event.created_at));
-    counts.set(key, (counts.get(key) ?? 0) + 1);
+function countFromDescription(description: string) {
+  if (/^no contributions?/i.test(description)) {
+    return 0;
   }
 
-  const rawDays = Array.from({ length: ACTIVITY_DAY_COUNT }, (_, index) => {
-    const date = new Date(now);
-    date.setUTCHours(0, 0, 0, 0);
-    date.setUTCDate(date.getUTCDate() - (ACTIVITY_DAY_COUNT - 1 - index));
+  const match = description.match(/^([\d,]+)\s+contributions?/i);
+  return match ? Number(match[1].replaceAll(",", "")) : null;
+}
 
-    const dateString = dateKey(date);
-    return {
-      date: dateString,
-      label: formatDayLabel(date),
-      count: counts.get(dateString) ?? 0,
-    };
-  });
+function parseContributionCalendar(html: string) {
+  const descriptions = new Map<string, string>();
+  const tooltipPattern = /<tool-tip\b([^>]*)>([\s\S]*?)<\/tool-tip>/gi;
 
-  const maximum = Math.max(0, ...rawDays.map((day) => day.count));
+  for (const match of html.matchAll(tooltipPattern)) {
+    const tooltipTag = match[1] ?? "";
+    const target = attribute(tooltipTag, "for");
+    if (!target) continue;
+    descriptions.set(target, textContent(match[2] ?? ""));
+  }
 
-  return rawDays.map((day) => ({
-    ...day,
-    level: activityLevel(day.count, maximum),
-  }));
+  const contributionDays: GitHubContributionDay[] = [];
+  const dayPattern = /<(?:td|rect)\b[^>]*\bdata-date=["']\d{4}-\d{2}-\d{2}["'][^>]*>/gi;
+
+  for (const match of html.matchAll(dayPattern)) {
+    const tag = match[0];
+    const date = attribute(tag, "data-date");
+    const rawLevel = Number(attribute(tag, "data-level"));
+    const id = attribute(tag, "id");
+
+    if (!date || !Number.isInteger(rawLevel) || rawLevel < 0 || rawLevel > 4) {
+      continue;
+    }
+
+    const description =
+      (id ? descriptions.get(id) : null) ??
+      `${rawLevel === 0 ? "No" : "Public"} contributions on ${date}`;
+
+    contributionDays.push({
+      date,
+      count: countFromDescription(description),
+      level: rawLevel as 0 | 1 | 2 | 3 | 4,
+      description,
+    });
+  }
+
+  contributionDays.sort((a, b) => a.date.localeCompare(b.date));
+
+  const totalMatch = html.match(/([\d,]+)\s+contributions?\s+(?:in the last year|in \d{4})/i);
+  const parsedTotal = totalMatch ? Number(totalMatch[1].replaceAll(",", "")) : null;
+  const knownCounts = contributionDays.map((day) => day.count).filter((count) => count !== null);
+  const summedTotal =
+    knownCounts.length === contributionDays.length && contributionDays.length > 0
+      ? knownCounts.reduce<number>((total, count) => total + (count ?? 0), 0)
+      : null;
+
+  return {
+    contributionDays,
+    contributionCount: parsedTotal ?? summedTotal,
+  };
+}
+
+async function fetchContributionCalendar() {
+  try {
+    const response = await fetch(GITHUB_CONTRIBUTIONS_URL, {
+      headers: {
+        Accept: "text/html",
+        "User-Agent": "liamthemo-portfolio",
+      },
+      next: { revalidate: GITHUB_REVALIDATE_SECONDS },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return parseContributionCalendar(await response.text());
+  } catch {
+    return null;
+  }
 }
 
 export async function getGitHubActivity(): Promise<GitHubActivityData> {
-  const [profile, repositories, events] = await Promise.all([
+  const [profile, repositories, calendar] = await Promise.all([
     fetchGitHub<GitHubProfileResponse>(`/users/${GITHUB_USERNAME}`),
     fetchGitHub<GitHubRepositoryResponse[]>(
       `/users/${GITHUB_USERNAME}/repos?type=owner&sort=pushed&direction=desc&per_page=8`,
     ),
-    fetchGitHub<GitHubEventResponse[]>(`/users/${GITHUB_USERNAME}/events/public?per_page=100`),
+    fetchContributionCalendar(),
   ]);
-
-  const publicEvents = events ?? [];
-  const activityDays = buildActivityDays(publicEvents);
-  const activityDates = new Set(activityDays.map((day) => day.date));
-  const recentEventCount = publicEvents.reduce(
-    (total, event) => total + (activityDates.has(dateKey(new Date(event.created_at))) ? 1 : 0),
-    0,
-  );
 
   const recentRepositories = (repositories ?? [])
     .filter((repository) => !repository.fork && !repository.archived)
@@ -167,9 +200,9 @@ export async function getGitHubActivity(): Promise<GitHubActivityData> {
     profileUrl: profile?.html_url ?? GITHUB_PROFILE_URL,
     publicRepoCount: profile?.public_repos ?? null,
     followerCount: profile?.followers ?? null,
-    recentEventCount,
-    activityDays,
+    contributionCount: calendar?.contributionCount ?? null,
+    contributionDays: calendar?.contributionDays ?? [],
     recentRepositories,
-    hasLiveData: Boolean(profile || repositories || events),
+    hasLiveData: Boolean(profile || repositories || calendar?.contributionDays.length),
   };
 }
