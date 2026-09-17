@@ -11,12 +11,15 @@ interface CalendarWeek {
 }
 
 const contributionColors = {
-  0: "#161b22",
-  1: "#0e4429",
-  2: "#006d32",
-  3: "#26a641",
-  4: "#39d353",
+  0: "var(--color-surface-2)",
+  1: "color-mix(in srgb, var(--color-accent) 22%, var(--color-surface-2))",
+  2: "color-mix(in srgb, var(--color-accent) 42%, var(--color-surface-2))",
+  3: "color-mix(in srgb, var(--color-accent) 68%, var(--color-surface-2))",
+  4: "var(--color-accent)",
 } as const;
+
+const contributionCellBorder =
+  "inset 0 0 0 1px color-mix(in srgb, var(--color-text) 5%, transparent)";
 
 const CELL_SIZE = 10;
 const CELL_GAP = 3;
@@ -102,21 +105,21 @@ export default function GitHubContributionGraph({
 
   if (weeks.length === 0) {
     return (
-      <div className="rounded-md border border-[#30363d] bg-[#0d1117] px-4 py-5 text-sm text-[#8b949e]">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface px-4 py-5 text-sm text-text-muted">
         Contribution calendar is temporarily unavailable.
       </div>
     );
   }
 
   return (
-    <div className="rounded-md border border-[#30363d] bg-[#0d1117] p-4 text-[#c9d1d9]">
+    <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 text-text">
       <p className="mb-3 text-[16px] font-normal leading-6">{summary}</p>
 
       <div className="no-scrollbar overflow-x-auto pb-1">
         <div className="w-max min-w-full">
           <div className="ml-8 h-[18px]" style={{ width: calendarWidth }} aria-hidden="true">
             <div
-              className="grid h-full text-[12px] leading-[18px] text-[#8b949e]"
+              className="grid h-full text-[12px] leading-[18px] text-text-muted"
               style={{
                 gridTemplateColumns: `repeat(${weeks.length}, ${CELL_SIZE}px)`,
                 columnGap: `${CELL_GAP}px`,
@@ -133,13 +136,9 @@ export default function GitHubContributionGraph({
             </div>
           </div>
 
-          <div
-            className="mt-1 flex"
-            role="img"
-            aria-label={summary}
-          >
+          <div className="mt-1 flex" role="img" aria-label={summary}>
             <div
-              className="mr-1 grid w-7 shrink-0 text-[12px] leading-[10px] text-[#8b949e]"
+              className="mr-1 grid w-7 shrink-0 text-[12px] leading-[10px] text-text-muted"
               style={{
                 gridTemplateRows: `repeat(7, ${CELL_SIZE}px)`,
                 rowGap: `${CELL_GAP}px`,
@@ -172,7 +171,7 @@ export default function GitHubContributionGraph({
                           width: CELL_SIZE,
                           height: CELL_SIZE,
                           backgroundColor: contributionColors[day.level],
-                          boxShadow: "inset 0 0 0 1px rgba(240,246,252,0.03)",
+                          boxShadow: contributionCellBorder,
                         }}
                       />
                     ) : (
@@ -190,12 +189,12 @@ export default function GitHubContributionGraph({
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-[#8b949e]">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-text-muted">
         <a
           href="https://docs.github.com/en/account-and-profile/concepts/contributions-on-your-profile"
           target="_blank"
           rel="noreferrer"
-          className="hover:text-[#58a6ff] hover:underline"
+          className="transition-colors hover:text-accent hover:underline"
         >
           Learn how we count contributions
         </a>
@@ -211,7 +210,7 @@ export default function GitHubContributionGraph({
                   width: CELL_SIZE,
                   height: CELL_SIZE,
                   backgroundColor: contributionColors[level],
-                  boxShadow: "inset 0 0 0 1px rgba(240,246,252,0.03)",
+                  boxShadow: contributionCellBorder,
                 }}
                 aria-hidden="true"
               />
