@@ -11,8 +11,8 @@ The site is currently being rebuilt from its older service-first layout into a p
 | Item | Value |
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
-| Current major branch | `v2.06` |
-| Current phase | Phase 6 — Education & Outside the Tech |
+| Current major branch | `v2.07` |
+| Current phase | Phase 7 — GitHub Activity |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.

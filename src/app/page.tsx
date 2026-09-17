@@ -3,6 +3,7 @@ import CTASection from "@/components/CTASection";
 import EducationSection from "@/components/EducationSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import FeaturedWork from "@/components/FeaturedWork";
+import GitHubActivitySection from "@/components/GitHubActivitySection";
 import ProfileHero from "@/components/ProfileHero";
 import ServicesSection from "@/components/ServicesSection";
 import SkillsSection from "@/components/SkillsSection";
@@ -49,6 +50,8 @@ export default function Home() {
       <SkillsSection />
 
       <EducationSection />
+
+      <GitHubActivitySection />
 
       <ServicesSection />
 
