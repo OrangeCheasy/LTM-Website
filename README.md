@@ -11,8 +11,8 @@ The site is currently being rebuilt from its older service-first layout into a p
 | Item | Value |
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
-| Current major branch | `v2.07` |
-| Current phase | Phase 7 — GitHub Activity |
+| Current major branch | `v2.08` |
+| Current phase | Phase 8 — Work With Me, Footer & Visitor Count |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.
@@ -98,6 +98,14 @@ For a local Cloudflare/OpenNext preview:
 ```bash
 npm run preview
 ```
+
+## Visitor counter
+
+The Phase 8 footer supports an anonymous unique-browser approximation using a Cloudflare D1 binding named `VISITOR_DB`.
+
+The counter stores only one aggregate integer. A first-party HttpOnly cookie prevents the same browser from incrementing the total again for approximately one year; no IP address, email, device fingerprint, or visitor identifier is stored in D1. The increment is a single atomic SQLite upsert, and the API disables caching so the stat remains current even when the homepage itself is cached.
+
+To enable the counter in a Cloudflare environment, create a D1 database and bind it to the Worker as `VISITOR_DB`. The API route creates its single counter table automatically. If the binding or database is unavailable, the footer degrades to `Visitor count unavailable` and page rendering continues normally.
 
 ## Project structure
 
