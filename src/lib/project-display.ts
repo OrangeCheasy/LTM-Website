@@ -2,9 +2,9 @@ import { SERVICE_META, type Project } from "@/lib/types";
 
 const PROJECT_TAG_ALIASES: Readonly<Record<string, string>> = {
   "PC hardware": "PC Hardware",
-  "BIOS configuration": "BIOS / UEFI",
+  "BIOS configuration": "BIOS Configuration",
   Software: "Software Troubleshooting",
-  "Windows troubleshooting": "Windows",
+  "Windows troubleshooting": "Windows Troubleshooting",
 };
 
 /**
@@ -22,19 +22,15 @@ export function projectCategoryLabel(project: Project): string {
 /**
  * Canonical display tags for project cards and case studies.
  *
- * `Project.stack` remains the factual source data. This layer normalizes old
- * naming differences and adds the common Roblox Studio tool to Roblox project
- * displays so two projects using the same platform do not present unrelated
- * tag vocabularies. Order stays intentional and duplicates are removed.
+ * `Project.stack` remains the factual source data. This layer only normalizes
+ * confirmed tag wording and casing, so presentation stays consistent without
+ * inferring technologies that have not been documented for a project. Order
+ * stays intentional and duplicates are removed.
  */
 export function projectTags(project: Project): string[] {
   const normalized = project.stack
     .map((tag) => PROJECT_TAG_ALIASES[tag] ?? tag.trim())
     .filter(Boolean);
-
-  if (project.services.includes("roblox") && !normalized.includes("Roblox Studio")) {
-    normalized.unshift("Roblox Studio");
-  }
 
   return Array.from(new Set(normalized));
 }
