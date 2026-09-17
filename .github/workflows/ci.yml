@@ -7,7 +7,7 @@ on:
       - "v*"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,7 +22,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: true
 
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -30,19 +31,22 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Temporary lockfile regeneration while applying security dependency patches.
-      # This artifact is committed back to the working branch, then these two
-      # steps are removed so normal CI returns to immutable `npm ci` installs.
+      # One-time lockfile regeneration for this security patch branch only.
       - name: Regenerate patched lockfile
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'chore/main-github-deploy-security-hardening'
         run: npm install --package-lock-only --ignore-scripts
 
-      - name: Upload patched lockfile
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: patched-package-lock
-          path: package-lock.json
-          if-no-files-found: error
-          retention-days: 1
+      - name: Commit patched lockfile
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'chore/main-github-deploy-security-hardening'
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Refresh lockfile for security dependency patches"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
       - name: Install dependencies
         run: npm ci
