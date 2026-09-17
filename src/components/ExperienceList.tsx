@@ -29,20 +29,23 @@ export default function ExperienceList({
   const RoleHeading = headingLevel;
 
   return (
-    <ol className="divide-y divide-border border-y border-border">
+    <ol className="relative space-y-0 before:absolute before:bottom-3 before:left-[0.45rem] before:top-3 before:w-px before:bg-border">
       {entries.map((entry) => (
-        <li
-          key={entry.id}
-          className="grid gap-4 py-6 sm:py-8 md:grid-cols-[minmax(10rem,14rem)_minmax(0,1fr)] md:gap-8"
-        >
-          <div className="space-y-1 text-metadata text-text-muted">
-            <p className="font-medium text-text-secondary">
+        <li key={entry.id} className="relative pb-10 pl-10 last:pb-0 sm:pl-12">
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-2 z-10 h-[0.9rem] w-[0.9rem] rounded-full border-2 border-bg bg-accent shadow-[0_0_0_1px_var(--color-border)]"
+          />
+
+          <div className="flex flex-col gap-1 text-metadata text-text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-1">
+            <span className="font-medium text-text-secondary">
               {entry.startDate} — {entry.endDate ?? "Present"}
-            </p>
-            <p>{entry.location}</p>
+            </span>
+            <span className="hidden sm:inline" aria-hidden="true">•</span>
+            <span>{entry.location}</span>
           </div>
 
-          <div className="min-w-0">
+          <div className="mt-2 min-w-0">
             <RoleHeading className="text-card text-text">{entry.role}</RoleHeading>
             <p className="mt-1 text-body-secondary font-medium text-text-secondary">
               {entry.organization}
@@ -55,7 +58,10 @@ export default function ExperienceList({
               <ul className="mt-5 max-w-[var(--layout-reading)] space-y-2 text-body-secondary text-text-secondary">
                 {entry.details.map((detail) => (
                   <li key={detail} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-[0.7em] h-1 w-1 shrink-0 rounded-full bg-accent" />
+                    <span
+                      aria-hidden="true"
+                      className="mt-[0.7em] h-1 w-1 shrink-0 rounded-full bg-accent"
+                    />
                     <span>{detail}</span>
                   </li>
                 ))}
