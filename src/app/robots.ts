@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
 /*
-  CLAUDE.md §11, §14 step 7. Deliberately does NOT disallow "/" — the homepage's
-  noindex is set via a robots meta tag (src/app/page.tsx), and crawlers have to
-  be allowed to fetch a page to see that tag and honor it. Disallowing it here
-  would hide the noindex signal instead of the page.
+  Crawlers may fetch public pages so route-level robots metadata can be
+  respected. Dynamic API endpoints remain excluded from crawling. The
+  homepage itself stays noindex until the remaining manual launch inputs are
+  complete, rather than being blocked here where crawlers could not see that
+  directive.
 */
 export default function robots(): MetadataRoute.Robots {
   return {

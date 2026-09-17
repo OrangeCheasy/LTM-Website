@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
-  // Keep the legacy portfolio URLs working while standardizing the public
-  // information architecture around /projects. The detail redirect only
-  // matches one path segment, so public assets under /portfolio/<slug>/* are
-  // not intercepted.
+  // Keep legacy URLs useful while standardizing the public information
+  // architecture around the developer portfolio. The portfolio detail
+  // redirect only matches one path segment, so image assets under
+  // /portfolio/<slug>/* remain untouched.
   async redirects() {
     return [
       {
@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
       {
         source: "/portfolio/:slug",
         destination: "/projects/:slug",
+        permanent: true,
+      },
+      {
+        source: "/services/:slug",
+        destination: "/contact?topic=:slug",
         permanent: true,
       },
     ];

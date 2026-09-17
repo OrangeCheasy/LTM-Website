@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import PortfolioStructuredData from "@/components/PortfolioStructuredData";
 import { siteIdentity } from "@/data/site";
 
 const inter = Inter({
@@ -17,23 +18,37 @@ const bricolage = Bricolage_Grotesque({
   display: "swap",
 });
 
+const siteDescription =
+  "Personal software developer portfolio featuring web applications, games, automation, tooling, experience, and technical projects.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://liamthemo.com"),
   title: {
     default: `${siteIdentity.name} — ${siteIdentity.title}`,
     template: `%s | ${siteIdentity.name}`,
   },
-  description:
-    "Personal software developer portfolio featuring web applications, games, automation, tooling, experience, and technical projects.",
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    siteName: siteIdentity.name,
+    title: `${siteIdentity.name} — ${siteIdentity.title}`,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteIdentity.name} — ${siteIdentity.title}`,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="en-CA"
       className={`${inter.variable} ${bricolage.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <PortfolioStructuredData />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-[var(--layout-gutter)] focus:z-[60] focus:rounded-[var(--radius-control)] focus:border focus:border-accent focus:bg-accent focus:px-4 focus:py-2 focus:text-metadata focus:font-semibold focus:text-bg"

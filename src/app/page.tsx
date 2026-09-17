@@ -12,13 +12,25 @@ import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   description: profileContent.intro,
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
+    url: "/",
     title: "Liam Mo — Software Developer",
     description: profileContent.intro,
   },
-  // Search indexing remains intentionally disabled until the Phase 9 launch audit.
-  robots: { index: false, follow: false },
+  twitter: {
+    card: "summary_large_image",
+    title: "Liam Mo — Software Developer",
+    description: profileContent.intro,
+  },
+  /*
+    Deliberately held at noindex until the remaining launch inputs are real:
+    final resume, exact LinkedIn URL, and approved experience/education data.
+    Phase 9 prepares the site for indexing without publishing known temporary
+    content into search results.
+  */
+  robots: { index: false, follow: true },
 };
 
 export default function Home() {
