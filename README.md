@@ -43,7 +43,8 @@ This repository uses version branches as stable major branches.
 - Never implement work directly on a major branch.
 - Create a minor working branch from the current major branch for every feature, fix, cleanup, or documentation task.
 - Complete and validate the work on the minor branch, then merge it back into the same major branch.
-- Minor branches must not introduce deployment triggers or other automation intended to deploy from the minor branch.
+- Minor branches must not introduce deployment triggers that can deploy from the minor branch.
+- Production deployment is restricted to `main` by the GitHub Actions deployment workflow.
 - When a phase is complete, the next phase begins from a new major branch with the version incremented by `0.01`.
 
 Example:
@@ -68,8 +69,9 @@ v2.01 complete
 | Hosting | Cloudflare Workers |
 | Adapter | `@opennextjs/cloudflare` |
 | Worker tooling | Wrangler 4 |
-| CI | GitHub Actions, validation only |
-| Production deployment | Cloudflare Git integration |
+| CI | GitHub Actions |
+| Production deployment | GitHub Actions → Cloudflare Workers |
+| Security scanning | CodeQL, npm audit, Dependabot |
 
 ## Local development
 
@@ -105,7 +107,7 @@ The Phase 8 footer supports an anonymous unique-browser approximation using a Cl
 
 The counter stores only one aggregate integer. A first-party HttpOnly cookie prevents the same browser from incrementing the total again for approximately one year; no IP address, email, device fingerprint, or visitor identifier is stored in D1. The increment is a single atomic SQLite upsert, and the API disables caching so the stat remains current even when the homepage itself is cached.
 
-To enable the counter in a Cloudflare environment, create a D1 database and bind it to the Worker as `VISITOR_DB`. The API route creates its single counter table automatically. If the binding or database is unavailable, the footer degrades to `Visitor count unavailable` and page rendering continues normally.
+To enable the counter in production without exposing the D1 resource ID in this public repository, configure the GitHub `production` environment secrets `CLOUDFLARE_VISITOR_DB_NAME` and `CLOUDFLARE_VISITOR_DB_ID`. The production deployment workflow injects that binding only into its temporary checkout before building and deploying. If both secrets are omitted, the site deploys without the optional binding and the footer degrades to `Visitor count unavailable`.
 
 ## Project structure
 
@@ -117,7 +119,7 @@ src/data/                 Structured project/service content
 src/lib/                  Shared utilities, types, navigation, and server logic
 public/                    Static assets
 docs/portfolio-revamp/    Current redesign specification and phase documents
-.github/workflows/         Pull-request validation only
+.github/workflows/         PR validation, production deployment, security scanning
 ```
 
 ## Portfolio revamp documents
@@ -133,59 +135,80 @@ Legacy mockups and the old `CLAUDE.md`, `DEPLOYMENT.md`, and `TODO.md` documents
 
 ## Deployment
 
-There is **one automated deployment owner: Cloudflare**.
+There is **one intended automated production deployment owner: GitHub Actions**.
 
-### Production
+### Production workflow
 
-Cloudflare's Git integration is responsible for the automatic production deployment from `main`. A push/merge to `main` is therefore the production release event.
+`.github/workflows/deploy.yml` runs only when `main` is pushed/merged or when the workflow is explicitly dispatched manually. Version branches and minor working branches cannot trigger it.
 
-For this OpenNext-based Next.js application, Cloudflare Workers Builds must use the OpenNext CLI directly:
+The workflow:
 
-```bash
-# Build command
-npx @opennextjs/cloudflare build
+1. Checks out the exact commit with persisted Git credentials disabled.
+2. Installs the locked npm dependency graph with `npm ci`.
+3. Injects the optional `VISITOR_DB` D1 binding from GitHub secrets without committing its resource identifiers.
+4. Audits production dependencies for high/critical known vulnerabilities.
+5. Runs linting and Cloudflare type generation.
+6. Builds the OpenNext Worker and runs TypeScript validation.
+7. Authenticates to Cloudflare only for the final deployment step and deploys the already-built Worker.
 
-# Deploy command
-npx @opennextjs/cloudflare deploy
-```
+GitHub Action dependencies are pinned to immutable full commit SHAs rather than mutable version tags.
 
-The deployment chain is intentional:
+### Required GitHub secrets
 
-1. Cloudflare runs `npx @opennextjs/cloudflare build`.
-2. OpenNext invokes the package `build` script, which must remain `next build`.
-3. OpenNext transforms the Next.js output into `.open-next/worker.js` and `.open-next/assets`.
-4. Cloudflare runs `npx @opennextjs/cloudflare deploy`, which deploys the already-built OpenNext Worker.
+Store deployment credentials in the GitHub **`production` environment** rather than in source files:
 
-Do not point the Cloudflare Build command at `npm run build`; that only creates the Next.js output, not the final OpenNext Worker. Do not change the package `build` script to call OpenNext, because OpenNext itself invokes that script and would recurse indefinitely.
+- `CLOUDFLARE_API_TOKEN` — a narrowly scoped Cloudflare API token with only the permissions/resources required to deploy this Worker.
+- `CLOUDFLARE_ACCOUNT_ID` — the account that owns the Worker.
 
-The repository must not add a second automated production deployment through GitHub Actions while Cloudflare's Git integration is enabled.
+Optional visitor-counter secrets must be configured as a pair:
 
-### GitHub Actions
+- `CLOUDFLARE_VISITOR_DB_NAME`
+- `CLOUDFLARE_VISITOR_DB_ID`
 
-GitHub Actions is validation-only. `.github/workflows/ci.yml` runs for pull requests targeting:
+The quote-form Discord webhook is a Cloudflare Worker runtime secret named `DISCORD_WEBHOOK_URL`. `wrangler.jsonc` declares it as required but never contains its value. Wrangler does not delete encrypted Worker secrets during a normal deploy.
 
-- `main`
-- version branches matching `v*`
+### Disable Cloudflare Git deployments
 
-It installs dependencies, lints, generates Cloudflare types, builds the OpenNext Worker, and typechecks. It does **not** upload or deploy anything and does not run again merely because a PR was merged.
+Before treating GitHub Actions as the deployment owner, disable the existing Cloudflare Workers Git integration so a push to `main` cannot trigger two independent production deployments.
 
-This separation prevents duplicate Cloudflare deployments and gives version branches CI coverage without making them production branches.
+In Cloudflare: **Workers & Pages → `ltm-website` → Settings → Builds → Disconnect** the Git repository/build integration. Disconnecting builds does not remove the currently deployed Worker.
+
+Do this after the GitHub `production` deployment secrets are configured and before relying on the first GitHub Actions production deployment.
+
+### Pull-request validation
+
+`.github/workflows/ci.yml` runs for pull requests targeting `main` or version branches matching `v*`. It installs dependencies, runs a production dependency audit, lints, generates Cloudflare types, builds the OpenNext Worker, and typechecks. It never deploys.
 
 ### Version branches
 
-Branches such as `v2.01`, `v2.02`, and later versions are development milestones. They do not automatically deploy to production under the repository policy. Production changes are released only when intentionally merged/pushed to `main`.
+Branches such as `v2.01`, `v2.02`, and later versions are development milestones. They do not automatically deploy to production. Production changes are released only when intentionally merged/pushed to `main`.
 
 ### Manual deployment
 
-For an explicitly requested manual deployment, use the repository's OpenNext deployment script:
+For an explicitly requested local manual deployment:
 
 ```bash
 npm run deploy
 ```
 
-That command builds the OpenNext Worker and deploys it through the OpenNext Cloudflare adapter.
+Use the same narrowly scoped Cloudflare credentials and ensure any required production resource bindings are present before deploying.
 
-Do not add Cloudflare credentials or deployment jobs to GitHub Actions unless the deployment ownership model is deliberately changed in the future.
+## Public-repository security
+
+This repository is intentionally public, so source code must never be treated as a secret boundary.
+
+- `.env*`, `.dev.vars*`, private keys, Wrangler local state, and build output are ignored by Git.
+- Cloudflare credentials and private D1 identifiers are supplied through GitHub/Cloudflare secrets, not committed files.
+- `wrangler.jsonc` declares required secret names without storing values and preserves dashboard-managed non-secret variables during deployments.
+- GitHub Actions use explicit least-privilege permissions and immutable action SHAs.
+- CodeQL scans `main` and runs weekly.
+- Dependabot checks npm and GitHub Actions dependencies weekly.
+- CI blocks pull requests with high/critical production dependency audit findings.
+- Public POST endpoints validate origin/request shape, and the quote webhook code avoids logging secret-bearing network errors.
+- Baseline browser security headers are applied globally through Next.js.
+- See [`SECURITY.md`](./SECURITY.md) for private vulnerability-reporting guidance.
+
+Repository-level branch rules, secret scanning/push protection, private vulnerability reporting, and GitHub Actions allow-list policies are defense-in-depth settings that should also be enabled in GitHub where available.
 
 ## License
 
