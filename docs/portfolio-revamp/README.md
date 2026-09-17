@@ -4,7 +4,7 @@
 
 Rebuild liamthemo.com from a service-first landing page into a polished personal developer portfolio centered on Liam, his work, experience, technical skills, education, GitHub activity, personal interests, and contact paths.
 
-The homepage should feel intentionally designed as one system. Typography, color, spacing, iconography, section widths, buttons, cards, borders, and motion should come from shared tokens/components instead of per-section improvisation.
+The site should feel intentionally designed as one system. Typography, color, spacing, iconography, section widths, buttons, cards, borders, and motion should come from shared tokens/components instead of per-section improvisation.
 
 ## Portfolio Positioning
 
@@ -19,13 +19,13 @@ Supporting specialties can appear in copy and project tags, for example:
 - Automation and tooling
 - UI/UX implementation
 
-## Target Homepage Order
+## Homepage Order
 
 1. Global navigation
 2. Profile hero
    - profile photo
    - full name
-   - social/contact icons
+   - GitHub / LinkedIn / contact icons
    - title: Software Developer
    - short introduction/about copy
    - resume button
@@ -33,19 +33,14 @@ Supporting specialties can appear in copy and project tags, for example:
    - exactly 3 featured projects
    - `View More` -> `/projects`
 4. Experience
-   - date range
-   - position title
-   - organization
-   - location
-   - short summary
+   - workplace-separated timelines
+   - role dates, title, organization, location, summary
    - `View Details` -> `/experience`
 5. Skills / Technology marquee
-   - continuously scrolling horizontal list
-   - icon + readable technology name
 6. Education
-   - school, program, dates/status, location
 7. GitHub Activity
    - live/recent public GitHub contribution/activity data
+   - portfolio-themed contribution colors
    - link to GitHub profile
 8. Outside the Tech
    - concise personal context
@@ -58,19 +53,17 @@ Supporting specialties can appear in copy and project tags, for example:
    - social links
    - privacy-safe visitor statistic
 
-## Route Direction
-
-The redesign should use these public routes:
+## Public Routes
 
 - `/` — homepage
 - `/projects` — all projects
-- `/projects/[slug]` — project detail/case study
+- `/projects/[slug]` — canonical project detail/case study
 - `/experience` — expanded work/leadership experience
-- `/about` — longer personal page, including `#outside-tech`
-- `/contact` — contact/work-with-me flow
-- `/resume` or a stable resume PDF URL — resume destination
+- `/about` — longer personal/context page
+- `/contact` — contact and project/collaboration flow
+- `/resume` — resume destination; held `noindex` until the final resume is supplied
 
-The current `/portfolio` route should remain compatible through a permanent redirect to `/projects` after the new projects route is ready.
+Legacy `/portfolio` URLs permanently redirect to the matching `/projects` routes. The legacy React page implementations were removed during v2.10 so there is only one project UI to maintain.
 
 ## Phase Map
 
@@ -95,14 +88,14 @@ The current `/portfolio` route should remain compatible through a permanent redi
 - The portfolio must not depend on JavaScript for basic reading/navigation.
 - External integrations must fail gracefully rather than leaving blank sections.
 - No secret tokens may be exposed to client-side code.
+- Project pages must not invent outcomes, features, metrics, or screenshots when typed project data does not provide them.
 
-## Required Manual Inputs Before Their Phases Can Be Finalized
+## Remaining Manual Inputs
+
+The structural/content system is complete enough to continue development without these, but final launch still needs:
 
 - Approved profile photo.
 - Current resume PDF/content.
-- Exact LinkedIn profile URL.
-- Final three featured projects and their preferred cover art.
-- Final experience and education wording/dates.
-- Additional approved personal photos and alt text for `Outside the Tech`.
+- Final approved personal photos and alt text for `Outside the Tech`.
 
-These inputs should not block the structural implementation. Components and data models can be completed first using clearly labeled temporary content.
+LinkedIn, featured-project selection, experience, and education are already supplied and should not be treated as launch blockers in new documentation.

@@ -2,7 +2,7 @@
 
 ## Objective
 
-Keep the strongest part of the current site—the project showcase concept—but make it a clearer representation of real development work and connect it to a dedicated `/projects` route.
+Use project work as the strongest proof on the site, with a concise homepage showcase and a canonical `/projects` route for the full portfolio and case studies.
 
 ## Homepage Featured Projects
 
@@ -21,22 +21,7 @@ Avoid stuffing every detail into the homepage card. The goal is to make the proj
 
 ## Featured Project Selection
 
-The three projects should collectively show range rather than three versions of the same skill set.
-
-Recommended selection criteria:
-
-1. technically substantial
-2. visually understandable
-3. demonstrates a different capability from the other two
-4. has enough material for a strong detail page
-
-Potential categories represented across the set:
-
-- full-stack/web application
-- game development
-- automation/tooling
-
-Final project choices are a content decision made during implementation.
+The three projects should collectively show range rather than three versions of the same skill set. Selection is driven by the shared `projects` data and `featured` flags.
 
 ## Homepage CTA
 
@@ -46,66 +31,60 @@ Action: `View More`
 
 Destination: `/projects`
 
-## Route Migration
+## Route Migration — Complete
 
-The current public route is `/portfolio`. The redesign should standardize the user-facing language around **Projects**.
+The canonical public routes are now:
 
-Implementation order:
+- `/projects`
+- `/projects/[slug]`
 
-1. Build `/projects` using the shared project data.
-2. Update internal navigation and links.
-3. Add a permanent redirect from `/portfolio` to `/projects`.
-4. Preserve individual legacy URLs where necessary through redirects.
-5. Update sitemap/canonical metadata.
+Legacy `/portfolio` and `/portfolio/:slug` URLs permanently redirect to the matching project routes in `next.config.ts`. During v2.10 the obsolete React implementations and legacy Open Graph route files under `src/app/portfolio` were removed, leaving one project-page implementation to maintain. Static image assets under `public/portfolio/...` are intentionally unchanged because their URL paths are asset locations, not public page routes.
 
 ## `/projects` Page
 
-The projects page should support a larger list/grid and make scanning easy.
+The v2.10 Projects index includes:
 
-Recommended fields:
-
-- title
-- summary
-- year
-- project type
-- technologies
-- status
-- thumbnail
-- slug
-- featured flag
-- source/demo links when public
+- responsive portfolio summary derived from shared project data
+- a featured case-study panel
+- the remaining project grid
+- technology tags and category context
+- canonical metadata and a route-specific Open Graph image
+- CTA paths into Contact and About
 
 ## Project Detail Pages
 
-Use `/projects/[slug]` and a consistent case-study structure:
+`/projects/[slug]` is now the canonical case-study implementation and supports:
 
-- overview
-- problem/goal
-- role/contribution
-- technical approach
-- screenshots/media
-- notable challenges
-- result/current status
-- links to source/live demo when appropriate
+- summary and category context
+- responsive cover art
+- challenge and implementation approach
+- confirmed outcomes/metrics when present
+- role/year/client metadata when present
+- stack/technology tags
+- optional What I Built and Key Features data
+- optional screenshot carousel
+- optional before/after comparisons
+- external/live and public source links when supplied
+- previous/next project navigation
+- unique canonical/Open Graph metadata
+
+Optional content stays optional. A project without metrics, feature copy, screenshots, or a public repository does not render an empty or invented section.
 
 ## Data Architecture
 
-Keep project content in a typed shared source rather than duplicating it between homepage and project pages.
-
-The homepage should derive its three cards from `featured: true` data with a deliberate ordering field.
+Project content stays in the typed shared source under `src/data/projects.ts`. The homepage, project index, detail route, service cross-links, and metadata all consume that same source.
 
 ## Acceptance Criteria
 
-- Homepage always shows exactly three featured projects.
+- Homepage shows exactly three featured projects.
 - `View More` leads to `/projects`.
-- Project card typography and spacing use Phase 01 primitives.
-- Cards remain readable and tappable on mobile.
-- `/portfolio` continues to work through a permanent redirect after migration.
-- Project pages have unique title/description metadata.
+- Project typography, spacing, surfaces, borders, buttons, and focus treatment use the shared design system.
+- Cards and case studies remain readable and tappable on mobile.
+- `/portfolio` continues to work through permanent redirects.
+- Project pages have unique title/description/canonical metadata.
 - Missing external source/demo links do not leave dead buttons.
+- Missing optional evidence does not produce fabricated content.
 
-## Manual Inputs
+## Remaining Manual Inputs
 
-- Final three featured projects.
-- Approved project cover images/screenshots.
-- Confirmation of which repositories/demos can be publicly linked.
+Additional project screenshots, public source links, or metrics can be added later when real assets/evidence are available. They are content enhancements, not blockers for the project route architecture.

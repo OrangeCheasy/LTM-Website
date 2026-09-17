@@ -1,6 +1,6 @@
 # Portfolio Revamp — Launch Audit
 
-This document tracks the final Phase 9 release state for the portfolio revamp.
+This document tracks the release state of the portfolio redesign. `v2.10` is the launch-hardening and secondary-page redesign pass.
 
 ## Code-complete launch work
 
@@ -10,43 +10,77 @@ This document tracks the final Phase 9 release state for the portfolio revamp.
 - Person + WebSite structured data is emitted server-side.
 - A keyboard-visible skip link targets the main content region.
 - A portfolio-styled 404 page is present.
-- `/projects` and `/projects/[slug]` are the canonical project destinations.
-- `/portfolio` and `/portfolio/:slug` permanently redirect to the matching project routes.
+- `/projects` and `/projects/[slug]` are the only project UI implementations.
+- `/portfolio` and `/portfolio/:slug` permanently redirect to the matching project routes; the now-dead legacy React pages were removed in v2.10.
 - Legacy `/services/:slug` URLs permanently redirect into `/contact?topic=:slug`.
 - Sitemap output uses canonical project URLs and excludes intentionally `noindex` placeholder routes.
 - `robots.txt` allows public routes while excluding `/api/`.
-- GitHub activity has a text equivalent and graceful failure state.
+- GitHub activity has a text equivalent, graceful failure state, and contribution colors themed to the portfolio design system.
 - The technology marquee hides its duplicate visual track from assistive technology and respects reduced motion.
 - The visitor counter fails gracefully and does not block page rendering.
-- Contact copy/metadata is aligned to collaboration and portfolio language rather than the old service-first homepage.
+- GitHub, LinkedIn, and contact destinations share the central social-link data source.
+- Contact copy/metadata is aligned to collaboration and portfolio language.
 - Favicon/icon route assets are present under `src/app`.
-- Education content is confirmed and published for Ernest Manning High School and Mount Royal University, including dates, program status, location, and relevant coursework.
-- Experience content is confirmed and published as a vertical role timeline for AuStudio, Hello Nori, and freelance computer-tech work, including the Server-to-Supervisor promotion path.
+- Education content is confirmed and published.
+- Experience content is confirmed and grouped into separate workplace timelines.
+- `/projects`, `/projects/[slug]`, `/contact`, and `/about` were redesigned in v2.10 around the shared semantic spacing, surface, border, type, button, and focus systems.
+- The homepage Outside the Tech gallery exposes a stable `#outside-tech` anchor so About can link to it without duplicating the gallery.
+
+## v2.10 page architecture cleanup
+
+- `/projects/[slug]` now owns the case-study implementation directly instead of importing the legacy `/portfolio/[slug]` page.
+- Case studies render only evidence present in typed project data: metrics, features, screenshots, and before/after sections disappear when not supplied rather than being filled with placeholder claims.
+- Project detail pages now have canonical metadata, responsive hero art, challenge/approach/outcome structure, project facts, technology tags, optional implementation/media sections, and previous/next project navigation.
+- The Projects index has a responsive portfolio summary, featured case study, and remaining-work grid.
+- Contact now has canonical metadata, direct email/social destinations, progressive form context, and a clearer two-column desktop layout that collapses naturally on smaller screens.
+- About now derives current work, education, location, and skills from shared data sources rather than duplicating those facts in page-local copy.
 
 ## Intentional indexing hold
 
-The homepage remains `noindex, follow` until the remaining owner-supplied launch content is real. This prevents temporary/pending content from being published into search results while still allowing crawlers to follow canonical links.
+The homepage remains `noindex, follow`. This is deliberate even though LinkedIn, experience, education, canonical routing, and the main page system are complete.
 
-The following inputs are still required before the homepage should switch to `index, follow`:
+The remaining owner-supplied inputs before the homepage should switch to `index, follow` are:
 
 - approved profile photo
 - current public resume asset/content
-- exact LinkedIn profile URL
+- final approved personal photos/alt text for the Outside the Tech gallery
 
-The resume route remains `noindex` while the PDF/content is pending. The experience route is now indexable because confirmed public experience entries exist, and sitemap generation mirrors that state.
+The resume route remains `noindex` while its final content is pending. Do not remove the homepage indexing hold during intermediate v2.10 work.
 
-## Infrastructure/manual validation still required
+## Automated validation
 
-- Provision the optional Cloudflare D1 binding `VISITOR_DB` to enable the live visitor statistic. Without it, the footer intentionally displays an unavailable fallback.
-- Validate the final layout at narrow phone, modern phone, tablet portrait, tablet landscape, laptop, and wide desktop widths.
-- Tab through navigation, hero actions, project cards, contact controls, GitHub links, and footer links and confirm visible focus states.
-- Verify `/portfolio` and a legacy `/portfolio/:slug` URL return permanent redirects to `/projects` equivalents.
-- Verify a legacy `/services/:slug` URL redirects into the matching contact topic.
-- Submit the production contact form end to end and confirm the configured notification arrives.
-- Verify GitHub API failure and visitor-counter failure states do not break page rendering.
-- Confirm the current favicon/app icon visually in production browsers.
-- Confirm the final profile image crop once the approved photo is supplied.
+Every v2.10 implementation PR must pass the repository CI loop before it is merged into the `v2.10` major branch:
+
+- dependency installation
+- production dependency audit
+- ESLint
+- Cloudflare type generation
+- OpenNext worker build
+- TypeScript typecheck
+
+No minor v2.10 branch should deploy to production. Production deployment remains a `main`-only action.
+
+## Manual validation still required
+
+Run these checks on the final v2.10 build before releasing it to `main`:
+
+- narrow phone, modern phone, tablet portrait, tablet landscape, laptop, and wide desktop layouts
+- keyboard tab/focus order through navigation, page CTAs, project cards, carousels, contact controls, GitHub/social links, and footer
+- touch/swipe behavior for the Outside the Tech and project screenshot galleries
+- `/portfolio` and `/portfolio/:slug` permanent redirects
+- `/services/:slug` redirect into the correct contact topic
+- production contact-form submission and delivery of its configured notification
+- GitHub API and visitor-counter failure states
+- favicon/app icon rendering in production browsers
+- visitor counter with the private production D1 binding
+- final image crops once the profile and personal gallery assets are supplied
+
+## Repository / deployment follow-up
+
+- Keep GitHub Actions as the only production deployment path; disable the old Cloudflare Git integration if it is still enabled.
+- `main` is currently not protected by branch protection. Add a GitHub ruleset or branch protection requiring pull requests and CI before merge if desired; the connected GitHub tool used for this audit does not expose repository-administration mutations.
+- Continue using minor branches for implementation and merge completed work into the active version major branch before any release PR to `main`.
 
 ## Launch rule
 
-Do not remove the homepage `noindex` flag merely to satisfy a checklist. Indexing should be enabled only after the remaining owner-supplied profile/resume/social content is finalized and the live production validation passes.
+Do not remove the homepage `noindex` flag merely to satisfy a checklist. Enable indexing only when the remaining owner-supplied assets are final and the production/manual validation above passes.
