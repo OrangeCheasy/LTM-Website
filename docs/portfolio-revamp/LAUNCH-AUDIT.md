@@ -1,6 +1,6 @@
 # Portfolio Revamp — Launch Audit
 
-This document tracks the release state of the portfolio redesign. `v2.10` is the launch-hardening and secondary-page redesign pass.
+This document tracks the release state of the portfolio redesign. `v2.12` is the SEO launch pass after production visual and functional approval.
 
 ## Code-complete launch work
 
@@ -35,21 +35,20 @@ This document tracks the release state of the portfolio redesign. `v2.10` is the
 - Contact now has canonical metadata, direct email/social destinations, progressive form context, and a clearer two-column desktop layout that collapses naturally on smaller screens.
 - About now derives current work, education, location, and skills from shared data sources rather than duplicating those facts in page-local copy.
 
-## Intentional indexing hold
+## Search indexing state
 
-The homepage remains `noindex, follow`. This is deliberate even though LinkedIn, experience, education, canonical routing, and the main page system are complete.
+The homepage is intentionally **indexable** as of the v2.12 SEO launch pass. The owner has completed production visual and functional inspection and approved the public portfolio for search indexing.
 
-The remaining owner-supplied inputs before the homepage should switch to `index, follow` are:
+- Homepage: `index, follow`
+- Public portfolio routes: indexable through their route metadata and canonical URLs
+- Sitemap: includes the homepage, public route indexes, and canonical project detail routes
+- Resume: remains `noindex, follow` because the route still contains placeholder content and no final public resume asset
 
-- approved profile photo
-- current public resume asset/content
-- final approved personal photos/alt text for the Outside the Tech gallery
-
-The resume route remains `noindex` while its final content is pending. Do not remove the homepage indexing hold during intermediate v2.10 work.
+Future profile, resume, or personal-gallery content can be added as post-launch content improvements without holding the rest of the portfolio out of search.
 
 ## Automated validation
 
-Every v2.10 implementation PR must pass the repository CI loop before it is merged into the `v2.10` major branch:
+Every implementation PR must pass the repository CI loop before it is merged into its active version branch:
 
 - dependency installation
 - production dependency audit
@@ -58,22 +57,13 @@ Every v2.10 implementation PR must pass the repository CI loop before it is merg
 - OpenNext worker build
 - TypeScript typecheck
 
-No minor v2.10 branch should deploy to production. Production deployment remains a `main`-only action.
+No minor version branch should deploy to production. Production deployment remains a `main`-only action.
 
-## Manual validation still required
+## Manual production validation
 
-Run these checks on the final v2.10 build before releasing it to `main`:
+Production visual and functional inspection was completed and approved by the owner before the v2.12 SEO launch pass. Responsive layout, interaction behavior, navigation, public routes, and deployed functionality are therefore treated as manually validated for this release.
 
-- narrow phone, modern phone, tablet portrait, tablet landscape, laptop, and wide desktop layouts
-- keyboard tab/focus order through navigation, page CTAs, project cards, carousels, contact controls, GitHub/social links, and footer
-- touch/swipe behavior for the Outside the Tech and project screenshot galleries
-- `/portfolio` and `/portfolio/:slug` permanent redirects
-- `/services/:slug` redirect into the correct contact topic
-- production contact-form submission and delivery of its configured notification
-- GitHub API and visitor-counter failure states
-- favicon/app icon rendering in production browsers
-- visitor counter with the private production D1 binding
-- final image crops once the profile and personal gallery assets are supplied
+The placeholder `/resume` route remains intentionally excluded from indexing until real resume content is supplied.
 
 ## Repository / deployment follow-up
 
@@ -83,4 +73,4 @@ Run these checks on the final v2.10 build before releasing it to `main`:
 
 ## Launch rule
 
-Do not remove the homepage `noindex` flag merely to satisfy a checklist. Enable indexing only when the remaining owner-supplied assets are final and the production/manual validation above passes.
+The homepage indexing hold has been removed for v2.12. Keep intentionally incomplete or placeholder routes such as `/resume` out of search until their real public content is ready.
