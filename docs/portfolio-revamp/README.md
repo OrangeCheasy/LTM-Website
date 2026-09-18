@@ -90,6 +90,14 @@ Legacy `/portfolio` URLs permanently redirect to the matching `/projects` routes
 - No secret tokens may be exposed to client-side code.
 - Project pages must not invent outcomes, features, metrics, or screenshots when typed project data does not provide them.
 
+## Version milestones
+
+- `v2.00` — immutable pre-revamp snapshot
+- `v2.01`–`v2.09` — phased portfolio redesign
+- `v2.10`–`v2.12` — secondary-page normalization, hardening, SEO launch, and pre-freeze cleanup
+- `v3.00` — finalized portfolio baseline
+- `v4.00` — planned passkey-protected visual CMS/editor; phase roadmap lives in `docs/v4.00/`
+
 ## Post-launch content inputs
 
 The portfolio is approved for public search indexing. The following can still be supplied as content upgrades without blocking the launched site:
