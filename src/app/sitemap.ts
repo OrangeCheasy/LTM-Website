@@ -6,11 +6,13 @@ const BASE_URL = "https://liamthemo.com";
 
 /*
   Keep the sitemap focused on routes that are intentionally indexable. The
-  homepage and resume remain omitted while their final launch inputs are
-  pending, and Experience is included only after real public entries exist.
+  homepage is public and indexable; the placeholder resume remains omitted
+  until a final public resume is supplied. Experience is included only after
+  real public entries exist.
 */
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
+    "/",
     "/projects",
     "/about",
     "/contact",

@@ -90,12 +90,12 @@ Legacy `/portfolio` URLs permanently redirect to the matching `/projects` routes
 - No secret tokens may be exposed to client-side code.
 - Project pages must not invent outcomes, features, metrics, or screenshots when typed project data does not provide them.
 
-## Remaining Manual Inputs
+## Post-launch content inputs
 
-The structural/content system is complete enough to continue development without these, but final launch still needs:
+The portfolio is approved for public search indexing. The following can still be supplied as content upgrades without blocking the launched site:
 
-- Approved profile photo.
-- Current resume PDF/content.
-- Final approved personal photos and alt text for `Outside the Tech`.
+- Approved/final profile photo, if the current presentation changes.
+- Current public resume PDF/content. Until supplied, `/resume` remains `noindex`.
+- Additional approved personal photos and alt text for `Outside the Tech`.
 
-LinkedIn, featured-project selection, experience, and education are already supplied and should not be treated as launch blockers in new documentation.
+LinkedIn, featured-project selection, experience, education, and the current production layout/functionality are already approved and should not be treated as launch blockers.
