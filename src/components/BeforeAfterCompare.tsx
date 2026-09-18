@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 /*
-  "Before / After" comparison pairs (CLAUDE.md §6 `Project.beforeAfter`).
+  "Before / After" comparison pairs from `Project.beforeAfter`.
 
   Deliberately NOT the horizontal-scroll ScreenshotCarousel. That component
   lays every image out in one un-wrapped row, three visible at a time — fine

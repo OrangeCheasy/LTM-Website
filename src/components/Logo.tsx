@@ -1,12 +1,9 @@
 /*
-  The "lm" mark (CLAUDE.md §9 — the mockup sets the header and footer logo as
-  this custom ligature, not the letters "lm" typed in the display face, which
-  is what both used to render).
+  The "lm" mark shared by the header, footer, favicon, and generated brand surfaces.
 
   WHERE THE PATH COMES FROM. It is a trace of the owner-supplied artwork at
   public/tab/lm-icon.webp (originally delivered as a 630 KB PNG; converted
-  2026-08-21 — same reasoning as CLAUDE.md §9.3/§12, see the projects.ts
-  covers), not a hand-drawn approximation: the orange mark was masked out of
+  2026-08-21 to reduce asset weight, matching the project-cover optimization), not a hand-drawn approximation: the orange mark was masked out of
   that source, its outline walked as a single closed contour, and the result
   simplified until adding more points stopped changing the render. The trace
   differs from the source artwork by 0.34% of pixels — edge antialiasing —

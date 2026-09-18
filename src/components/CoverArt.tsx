@@ -3,9 +3,9 @@ import type { Project } from "@/lib/types";
 import ServiceGlyph from "@/components/ServiceGlyph";
 
 /*
-  The 3:2 card face shared by /portfolio's ProjectCard and the home page's
-  FeaturedWork grid (CLAUDE.md §6 — `cover` is required, and the grid is the
-  visual centrepiece both pages are built around).
+  The 3:2 card face shared by /projects ProjectCard surfaces and the home
+  page FeaturedWork grid. `Project.cover` is required so both grids retain a
+  stable visual rhythm.
 
   One component rather than two, because the two grids previously each had
   their own copy of "read images[0], fall back to a tile" and had already

@@ -106,10 +106,8 @@ interface WarmGlowOptions {
    * left fill corner, and moving the centre does not change the falloff curve,
    * only where it starts from.
    *
-   * Added for the hero composition (HeroArt.tsx), which needs the same warm
-   * light coming from under the panels rather than from a corner. §9.4 says
-   * not to hand-write a second radial gradient for a new element, so this is
-   * an option on the shared one instead of a copy with different numbers.
+   * Supports compositions that need the same warm light to originate from an
+   * arbitrary point rather than a corner, without duplicating gradient logic.
    */
   at?: string;
   /**
@@ -121,9 +119,8 @@ interface WarmGlowOptions {
    * values on a box that is not square still give an ellipse. A circle needs a
    * single length, which is what this takes.
    *
-   * Owner call, for the service cards: their fill is a round pool of light
-   * centred under the bright point of the lit top edge, not the wide elliptical
-   * wash every panel on the site uses.
+   * Used when a surface needs a true circular pool of light instead of the
+   * wider elliptical wash.
    */
   radius?: string;
 }
@@ -213,12 +210,11 @@ export function warmPanel({
 }
 
 /**
- * The lit top edge on the home page's service cards.
+ * A reusable lit top-edge gradient.
  *
  * A DIFFERENT SHAPE FROM THE REST OF THIS FILE, hence its own function rather
  * than another option on `warmGlow`. Everything above models light arriving
- * from a corner and spreading as an ellipse; the services mockup lights the
- * cards along their top border instead, so the falloff runs left-to-right
+ * from a corner and spreading as an ellipse; this treatment lights a surface along its top border, so the falloff runs left-to-right
  * along a line and there is no ellipse to size.
  *
  * OWNER CALL, and a departure from the mockup it was first fitted to. Sampling
@@ -228,9 +224,7 @@ export function warmPanel({
  * a fifth of the way in, and faded to nothing by the right corner.
  *
  * EDGE_PEAK IS EXPORTED because it is a shared position, not a private tuning
- * number — the service cards centre their fill glow on the same point, so that
- * the card reads as lit by its own edge rather than by a second source that
- * happens to sit nearby. Moving the peak moves both.
+ * number — callers can align a fill glow to the same exported peak when needed.
  *
  * The tail is a decay rather than a straight ramp: a linear fade to zero
  * leaves the midpoint visibly brighter than the eye expects, so the stops drop

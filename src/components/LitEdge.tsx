@@ -1,16 +1,9 @@
 import { warmEdgeBloom } from "@/lib/glow";
 
 /*
-  The lit top edge shared by the home page's triage cards and /portfolio's
-  project cards.
-
-  It started life inside ServicesSection, then the projects mockup turned out
-  to want the same treatment with a different left-to-right profile. Rather
-  than copy twenty lines of positioning and shadow into a second component and
-  let the two drift — which is exactly what happened to the cover-art fallback
-  before CoverArt existed — the geometry lives here and the caller passes the
-  gradient: warmEdgeImage() for the services profile, warmEdgeCentreImage() for
-  the projects one.
+  The reusable lit top edge used by project-card surfaces. The geometry lives
+  here so callers can provide the gradient profile without duplicating the
+  positioning and shadow treatment.
 
   INSET BY THE CORNER RADIUS. rounded-2xl is a 16px radius, and both mockups
   light exactly the straight segment between the two corner arcs — measured on
@@ -34,7 +27,7 @@ export default function LitEdge({
   image,
   className = "",
 }: {
-  /** The gradient, from warmEdgeImage() or warmEdgeCentreImage(). */
+  /** The gradient image used for the illuminated edge. */
   image: string;
   className?: string;
 }) {

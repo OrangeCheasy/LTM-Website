@@ -65,11 +65,25 @@ Production visual and functional inspection was completed and approved by the ow
 
 The placeholder `/resume` route remains intentionally excluded from indexing until real resume content is supplied.
 
+## Final pre-v3.00 repository cleanup
+
+The v2.12 pre-freeze cleanup removes obsolete implementation paths and aligns repository metadata with the launched portfolio:
+
+- removed the unreachable `/services/[slug]` React/OG implementation because `next.config.ts` permanently redirects those URLs into the contact flow
+- removed the old homepage Services/Hero components and their now-unused service-art helpers/types
+- removed the obsolete Cloudflare Pages `public/_redirects` file
+- kept the service-domain taxonomy used by project category labels, cover fallbacks, and contact routing
+- renamed the private package identity from `liamthemo-freelance-website` to `liamthemo-portfolio`
+- updated repository/agent deployment documentation to GitHub Actions → Cloudflare Workers
+- removed active-code references to retired pre-revamp specifications and deleted components
+
+The resulting v2.12 line is intended to be the clean source for the final `v3.00` portfolio freeze.
+
 ## Repository / deployment follow-up
 
-- Keep GitHub Actions as the only production deployment path; disable the old Cloudflare Git integration if it is still enabled.
-- `main` is currently not protected by branch protection. Add a GitHub ruleset or branch protection requiring pull requests and CI before merge if desired; the connected GitHub tool used for this audit does not expose repository-administration mutations.
-- Continue using minor branches for implementation and merge completed work into the active version major branch before any release PR to `main`.
+- Keep GitHub Actions as the only production deployment path and keep the retired Cloudflare Git build integration disconnected.
+- `main` is currently not protected by branch protection. A GitHub ruleset requiring pull requests and CI remains optional defense-in-depth repository administration.
+- Continue using minor branches for implementation and merge completed work into the active version branch before any release PR to `main`.
 
 ## Launch rule
 

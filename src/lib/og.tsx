@@ -4,20 +4,17 @@ import { ImageResponse } from "next/og";
 import { EDGE_PEAK, warmEdgeImage, warmGlowImage } from "@/lib/glow";
 
 /*
-  Shared renderer behind every opengraph-image.tsx in the app (CLAUDE.md §9,
-  §14 step 7). One look for the whole site rather than one-off per page: molten
+  Shared renderer behind every opengraph-image.tsx in the app. One visual
+  system for the whole site rather than one-off per page: molten
   dark surface, Bricolage Grotesque headline, Inter body, the same dot-grid
   motif as the home page hero.
 
   These are prerendered at build time wherever the parent route is static — a
   dynamic opengraph-image.tsx under a `[slug]` folder still needs its own
-  `generateStaticParams` (App Router doesn't inherit the page's), matching the
-  page's own static shell so the image route never invokes the Worker either
-  (§4.1).
+  `generateStaticParams` (App Router doesn't inherit the page's), matching the page's own static shell so the image route remains static.
 
   STATIC RENDER, HAND-COPIED PALETTE.
-  This is the one deliberate exception to "reference tokens, never hex"
-  (§9.2): satori has no access to CSS custom properties, so the values below
+  Satori has no access to CSS custom properties, so the values below
   are copied from globals.css's §9.1 tokens by hand and will drift if the
   palette changes there. Keep them in sync. The site has no theme to branch
   on, so unlike the old two-theme version this always renders one look.
@@ -31,12 +28,9 @@ import { EDGE_PEAK, warmEdgeImage, warmGlowImage } from "@/lib/glow";
   "orange only on clickables" rule (written for the site's UI) doesn't govern
   a logo mark the way it governs an in-page decoration.
 
-  2026-08-20 REDESIGN (owner request): "match the theme, same glowing outline
-  as the service triage buttons." Replaced the plain top-left corner ellipse
-  with the triage card's own two-piece treatment (ServicesSection.tsx) —
-  a lit top edge (warmEdgeImage) plus a round pool of light under its
-  brightest point (warmGlowImage with `radius`) — and added the same flat
-  neutral border the triage cards carry on their other three sides. It is a
+  The current design uses a lit top edge (warmEdgeImage) plus a round pool
+  of light under its brightest point (warmGlowImage with `radius`) and a flat
+  neutral border on the other three sides. It is a
   border on the embed's own edge rather than a bordered card floating inside
   it, since the embed already reads as one full-bleed surface (there's no
   page-background around it for a floating card to contrast against, the way
@@ -134,7 +128,7 @@ export async function renderOgImage({
         {/*
           The triage cards' round pool of light, centred under the lit edge's
           brightest point (`EDGE_PEAK`% from the left) — same `radius`/`at`
-          idea as ServicesSection.tsx's CARD_GLOW, scaled up for this canvas
+          treatment scaled for this 1200px canvas
           (70px was fitted to a ~380px-wide card; this canvas is 1200px).
         */}
         <div

@@ -15,10 +15,9 @@ import {
 } from "@/lib/request-security";
 
 /*
-  The quote form's delivery handler (CLAUDE.md §8, build order step 6). This is
-  the site's only routine dynamic path — every other route is prerendered and
-  served from the assets binding for free (§4.1). No `runtime = "edge"`: the
-  OpenNext adapter targets the Node.js runtime, per §3.
+  The quote form's delivery handler. It is the site's routine dynamic path;
+  the portfolio pages are otherwise static-first. The OpenNext adapter targets
+  the Node.js runtime, so this route does not opt into an edge runtime.
 
   One outbound call: a Discord webhook that notifies the owner. This is the
   call that matters — if it fails, the lead is lost, so it is awaited and a
