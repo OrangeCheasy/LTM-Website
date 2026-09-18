@@ -6,16 +6,44 @@ import { Section, SectionHeader } from "@/components/ui";
 
 const outsideTechPhotos = [
   {
-    src: "/about/fish.webp",
+    src: "/homepage/outside-tech/photo-01.avif",
     alt: "Liam smiling and holding a small fish he caught, with grassy hills and a blue sky behind him.",
   },
   {
-    src: "/about/gym.webp",
+    src: "/homepage/outside-tech/photo-02.avif",
     alt: "Liam at the gym on a bench press with a training partner.",
   },
   {
-    src: "/about/food.webp",
+    src: "/homepage/outside-tech/photo-03.avif",
     alt: "Liam adding fresh herbs to a bowl of pho at a restaurant.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-04.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-05.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-06.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-07.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-08.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-09.avif",
+    alt: "A moment from Liam's life outside technology.",
+  },
+  {
+    src: "/homepage/outside-tech/photo-10.avif",
+    alt: "A moment from Liam's life outside technology.",
   },
 ];
 
