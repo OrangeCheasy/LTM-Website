@@ -68,11 +68,11 @@ Prefer server components and static rendering wherever live data is not required
 
 ## 5. SEO / metadata
 
-Current state: the homepage intentionally declares `robots: { index: false, follow: true }`. LinkedIn, experience, education, canonical project routes, and core metadata are complete, but the final profile photo, resume, and approved personal gallery assets are still pending. Remove the noindex state only during the final launch pass after those inputs and production QA are complete.
+Current state: the homepage is intentionally indexable after owner-approved production visual and functional validation. Canonical URLs, sitemap output, Open Graph metadata, favicon/app icons, and Person + WebSite structured data are in place. The placeholder resume route remains `noindex, follow` until a final public resume is supplied.
 
 Launch tasks:
 
-- index/follow enabled intentionally at final release
+- homepage index/follow enabled intentionally in v2.12
 - canonical URLs correct
 - sitemap uses `/projects` rather than `/portfolio`
 - legacy `/portfolio` redirects verified
@@ -89,7 +89,7 @@ Confirm:
 
 - title is `Software Developer`
 - homepage section order matches the master plan
-- resume is current before indexing
+- placeholder resume remains excluded from indexing until final content is supplied
 - experience/education dates are current
 - project links are valid
 - social links are valid
@@ -98,7 +98,7 @@ Confirm:
 
 ## 7. Production verification
 
-Before marking the revamp complete:
+Production verification requirements:
 
 - lint passes
 - TypeScript passes
@@ -113,4 +113,4 @@ Before marking the revamp complete:
 
 ## Acceptance Criteria
 
-The phase is complete only when the site is visually consistent, usable by keyboard/touch, responsive, build-clean, production-tested, and intentionally indexable. The detailed live checklist is maintained in `LAUNCH-AUDIT.md`.
+The phase is complete when the site is visually consistent, usable by keyboard/touch, responsive, build-clean, production-tested, and intentionally indexable. Owner production QA is approved; v2.12 completes the homepage indexing portion while the placeholder resume remains intentionally excluded.
