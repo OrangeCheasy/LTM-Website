@@ -1,36 +1,12 @@
-import type { Project, ServiceSlug } from "@/lib/types";
+import type { Project } from "@/lib/types";
 
 /**
- * Portfolio case studies (CLAUDE.md §6, §14 step 4). Drives /portfolio and
- * /portfolio/[slug] — adding a project here is the only change either page
- * needs. Display order is array order (§6/§14 — the index has no separate
- * sort), currently owner-chosen: This Website, Fuse Factory, OrangeCheasy,
- * Restaurant Sales Parser, then the rest.
+ * Canonical project/case-study data for the homepage, /projects, and
+ * /projects/[slug]. Display order is intentional array order.
  *
- * Restaurant Sales Parser is the flagship proof (§6). Fuse Factory was added
- * once the owner cleared it to be named publicly (§15) — it is a personal
- * project, not commissioned client work, so `problem`/`solution` describe the
- * design goal and what's been built rather than a client engagement, and
- * `result`/`images` are omitted rather than invented (§10). Excel Performance
- * Dashboard is still absent, same reason it always was: no owner input yet.
- *
- * Computer Builds & Repairs, Echo Realms, and This Website were added the
- * same way: real work, no invented numbers. Computer Builds & Repairs isn't a
- * single client engagement or a passion project — it's a running total
- * across many people (friends, family, and paying clients), so `client` is
- * omitted and `result` reports the one confirmed count (11 builds) rather
- * than a narrative outcome. Echo Realms is a personal project, technically
- * playable but light on content and currently on hold. This Website is the
- * site itself — no external client, but unlike the others it's `featured`
- * since it's a live example of the work sitting in front of the visitor.
- *
- * TODO(owner): the individual-project-page template (2026-08-20) added six
- * optional fields — `overview`, `whatIBuilt`, `features`, `role`, `year`,
- * `sourceUrl` — and only This Website has them filled in (lifted from
- * individual-project-page-mockup.png). Every project below renders fine
- * without them (each section hides itself when its field is unset), but the
- * Overview/What I Built/Key Features/Project Details columns stay thin on
- * the other five until real copy is written for them.
+ * Optional case-study fields remain unset until real owner-approved content
+ * exists. The UI hides unsupported sections rather than inventing outcomes,
+ * screenshots, metrics, or implementation claims.
  */
 export const projects: Project[] = [
   {
@@ -39,7 +15,7 @@ export const projects: Project[] = [
     // client: omitted — this is the owner's own business site.
     services: ["websites"],
     // Owner-supplied 2026-08-21, resolving the TODO that used to sit here.
-    // Delivered as cover.png (1.6 MB); converted to WebP (§9.3/§12 — every
+    // Delivered as cover.png (1.6 MB); converted to WebP (the evidence-based content rules/the evidence-based content rules — every
     // other cover on the site is already .webp) at quality 85, which held up
     // visually on inspection and cut it to ~130 KB. Source PNG deleted rather
     // than kept alongside — no other project keeps an unconverted original.
@@ -99,13 +75,13 @@ export const projects: Project[] = [
     // ephemeral Codespaces preview URL.
     externalLink: { href: "https://liamthemo.com", label: "Live Site" },
     //
-    // result: intentionally omitted (§10) — the site isn't launched with
+    // result: intentionally omitted (the evidence-based content rules) — the site isn't launched with
     // real traffic yet, so there's no conversion number to report.
     stack: ["Next.js", "TypeScript", "Tailwind CSS", "Cloudflare Workers"],
     // Real captures, supplied 2026-08-21 as JPEG — resolves the TODO that
     // used to sit here. `beforeAfter`, not `images`: see the field's own
     // comment on why a flat carousel isn't the right fit for paired
-    // before/after shots. Converted to WebP the same day (§9.3/§12 — see the
+    // before/after shots. Converted to WebP the same day (the evidence-based content rules/the evidence-based content rules — see the
     // `cover` note above); pixel dimensions are each file's real size
     // (Pillow), not guessed, and don't change across the JPEG->WebP swap.
     beforeAfter: [
@@ -170,7 +146,7 @@ export const projects: Project[] = [
     // client: omitted — this is a personal project, not commissioned work.
     services: ["roblox"],
     // The game's official Roblox thumbnail, not a gameplay screenshot. Used
-    // as the cover because §9 prefers a real image over the fallback tile;
+    // as the cover because the evidence-based content rules prefers a real image over the fallback tile;
     // real gameplay screenshots are planned but not taken yet, and when they
     // arrive they belong in `images` rather than replacing this.
     cover: {
@@ -184,7 +160,7 @@ export const projects: Project[] = [
       "The mini-game it's inspired by only exists as a few minutes inside a much bigger game. There's no standalone version of just that loop: things spawning faster and faster while you sort them correctly before time runs out.",
     solution:
       "The codebase is modular — spawning, movement, UI, and item drops are separate systems rather than one script — and runs on an event-driven architecture handled on both the server and the client. The UI is built in code rather than laid out in Studio's editor. Boomies spawn and currently move randomly rather than toward the player; pattern-based movement AI is planned but not built yet. Drops use a weighted system rather than flat odds, the spawn rate ramps up as each round progresses, and players earn coins for handling boomies correctly.",
-    // result / metrics: intentionally omitted (§10) — this is a passion
+    // result / metrics: intentionally omitted (the evidence-based content rules) — this is a passion
     // project, not a client engagement, so there's no client outcome to
     // report. Still in development; most of the basic gameplay above is
     // built, but the game isn't finished. Pattern-based movement AI for
@@ -198,7 +174,7 @@ export const projects: Project[] = [
     // and nothing else exists yet — repeating it under "See it in action"
     // would promise gameplay and deliver the same marketing art. Add real
     // gameplay screenshots here when they're taken; the cover stays as it is.
-    // featured: true — one of the mockup's three home-page picks (§15 Phase 2).
+    // featured: true — one of the mockup's three home-page picks (the evidence-based content rules Phase 2).
     featured: true,
   },
   {
@@ -257,7 +233,7 @@ export const projects: Project[] = [
         height: 1133,
       },
     ],
-    // featured: true — one of the mockup's three home-page picks (§15 Phase 2).
+    // featured: true — one of the mockup's three home-page picks (the evidence-based content rules Phase 2).
     featured: true,
   },
   {
@@ -277,12 +253,12 @@ export const projects: Project[] = [
       "A script reads the raw export and produces the finished report automatically — no manual retyping, no copy-paste between spreadsheets, no formulas to remember to update by hand.",
     // TODO(owner): name the actual report(s) it produces once confirmed.
     //
-    // TODO(owner): REAL BEFORE/AFTER METRICS — CLAUDE.md §16's open decision,
-    // still open. This is the flagship case study (§6: "lead with time saved
+    // TODO(owner): REAL BEFORE/AFTER METRICS — the retired pre-revamp specification
+    // still open. This is the flagship case study (the evidence-based content rules: "lead with time saved
     // per week"), and it is the one project on the site whose result section
     // is missing the number that would sell it.
     //
-    // `result` and `metrics` are both omitted rather than estimated. §11
+    // `result` and `metrics` are both omitted rather than estimated. the evidence-based content rules
     // forbids inventing a result, and a plausible-sounding figure is the
     // failure mode that rule exists to prevent: "cuts a two-hour job to five
     // minutes" reads as fact, cannot be verified by the reader, and is the
@@ -313,7 +289,7 @@ export const projects: Project[] = [
     //
     // featured: false — owner call, 2026-08-21, swapped out of the home
     // page's three-card grid in favour of This Website (see that entry
-    // above). Still the flagship case study on /portfolio (CLAUDE.md §6) and
+    // above). Still the flagship case study on /portfolio (the retired pre-revamp specification
     // still `services: ["automation", "excel-data"]`'s proof project — this
     // only changes which three cards the home page shows.
     featured: false,
@@ -335,12 +311,12 @@ export const projects: Project[] = [
     solution:
       "Built desktops from parts chosen for each person's budget and workload, and diagnosed and fixed a steady stream of hardware and software faults: failed components, boot failures, unexplained slowdowns, and the usual list of things that go wrong with a computer over a few years. Some of this was paid work, some was for friends and family.",
     // result: a real, owner-confirmed count rather than an invented outcome
-    // (§10) — there's no single client story here, just a running total.
+    // (the evidence-based content rules) — there's no single client story here, just a running total.
     result:
       "11 desktops built to date, plus an ongoing stream of repairs and upgrades.",
     metrics: [{ label: "Computers built", value: "11" }],
     stack: ["PC hardware", "BIOS configuration", "Software", "Windows troubleshooting"],
-    // images: intentionally omitted — no photos on hand yet (§9 prefers a
+    // images: intentionally omitted — no photos on hand yet (the evidence-based content rules prefers a
     // real screenshot over no image; same applies to build photos).
     featured: false,
   },
@@ -359,7 +335,7 @@ export const projects: Project[] = [
       "Wanted a dungeon crawler where the systems underneath — enemy AI, spawning, bosses, loot — are built to be reused and extended rather than one-off scripts per encounter, and where combat is readable: a player should be able to see an attack coming and react to it, not just get hit.",
     solution:
       "The codebase is modular so enemy behaviors, spawning, and loot logic can be reused across different enemies and areas rather than rewritten each time. Enemy AI telegraphs its attacks so players can read and react before they land. Enemies spawn based on the zone the player is in rather than flat random spawning, bosses are built as distinct phases rather than one flat health bar, and loot uses a weighted table instead of flat drop odds.",
-    // result / metrics: intentionally omitted (§10) — personal project, no
+    // result / metrics: intentionally omitted (the evidence-based content rules) — personal project, no
     // client outcome. Technically playable, but light on content and
     // currently on hold — a game at this scope is hard to build solo. Do not
     // reword `solution` to imply it's a finished, content-complete game.
@@ -368,26 +344,3 @@ export const projects: Project[] = [
     featured: false,
   },
 ];
-
-/**
- * Every project that demonstrates a given service, in `projects` order.
- *
- * This is the reverse half of the cross-linking loop. `Project.services` is
- * the single source of truth in both directions: a case study reads it
- * directly to link out to the services it demonstrates, and a service page
- * reads it through this function to list its related work. One field, so the
- * two lists cannot disagree — add "roblox" to a project and it appears on the
- * Roblox page with no second edit.
- *
- * NOT `Service.relatedProjects` — there is no such field any more. It used to
- * do this job as a hand-maintained list of slugs written before projects.ts
- * existed, and it had already drifted: `excel-data` still pointed at
- * "excel-performance-dashboard", a project that has never existed, and
- * neither "orangecheasy-youtube" nor a second automation project would have
- * appeared on any service page without someone remembering to add it in two
- * places. Removed 2026-08-21 (resolves the TODO that used to sit here) now
- * that this function had fully replaced it — a derived list cannot drift.
- */
-export function projectsForService(slug: ServiceSlug): Project[] {
-  return projects.filter((project) => project.services.includes(slug));
-}
