@@ -66,7 +66,7 @@ Use clear minor branch names such as:
 - `chore/v2.01-repository-cleanup`
 - `docs/v2.01-content-update`
 
-Do not merge a phase's work directly into `main` unless `main` is explicitly the current major branch for that task or the user is intentionally releasing completed version work to production.
+Do not implement phase work directly on `main`. After a change is complete, validated, and merged into the active version branch, release that version branch to `main` for production visual verification unless the user explicitly says not to release it.
 
 ### Phase version mapping
 
@@ -108,6 +108,8 @@ There is exactly **one automated production deployment owner: GitHub Actions**.
 
 - Minor branches never deploy.
 - Version branches are permanent development/release milestones and do not automatically deploy.
+- After validated work is merged into the active version branch, open a release pull request from that version branch to `main` so Liam can visually verify the change on the deployed site.
+- Treat this main release as the default final step for every completed change unless Liam explicitly says to keep the change off production.
 - Production changes only when completed version work is intentionally released to `main`.
 
 ### Manual deployment
