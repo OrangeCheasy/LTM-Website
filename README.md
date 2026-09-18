@@ -4,15 +4,15 @@ Personal portfolio website for **Liam Mo**, built around software development, p
 
 **Live site:** https://liamthemo.com
 
-The former service-first site has been rebuilt as a personal developer portfolio. The primary positioning is **Software Developer**, with supporting work across full-stack development, game development, automation, tooling, and UI implementation.
+The former service-first site has been rebuilt as a personal developer portfolio. The primary positioning is **Software Developer**, with supporting work across full-stack development, game development, automation, tooling, and UI implementation. The v3.00 line is the finalized portfolio baseline, with only owner-supplied photos and the final resume still being added as content polish.
 
 ## Current development line
 
 | Item | Value |
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
-| Current major branch | `v2.12` |
-| Current phase | Final pre-v3.00 repository cleanup |
+| Current major branch | `v3.00` |
+| Current phase | Final content polish — profile photos, Outside the Tech gallery, and final resume |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.
@@ -33,7 +33,7 @@ Each portfolio phase maps to a `v0.01` version increment:
 | 8 | `v2.08` | Work With Me, footer, visitor statistic |
 | 9 | `v2.09` | Accessibility, SEO, performance, launch audit |
 | Hardening | `v2.10`–`v2.12` | Secondary-page normalization, repository/deployment hardening, SEO launch |
-| Portfolio freeze | `v3.00` | Finalized portfolio baseline |
+| Portfolio baseline | `v3.00` | Finalized revamp architecture and final owner-supplied content polish |
 | Visual CMS/editor | `v4.00` | Passkey-protected editing system (planned) |
 
 The completed redesign plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/). The launch state is tracked in [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md), and the future v4.00 editor roadmap lives in [`docs/v4.00/`](./docs/v4.00/).
@@ -53,12 +53,12 @@ This repository uses version branches as stable major branches.
 Example:
 
 ```text
-v2.01
-  └─ feat/v2.01-design-system
-       └─ merge back into v2.01
+v3.00
+  └─ docs/v3.00-readme-refresh
+       └─ merge back into v3.00
 
-v2.01 complete
-  └─ create v2.02 for Phase 2
+v3.00 finalized
+  └─ future major editor/CMS work begins on v4.00
 ```
 
 ## Stack
@@ -117,10 +117,10 @@ To enable the counter in production without exposing the D1 resource ID in this 
 ```text
 src/app/                  Next.js routes and route-level metadata
 src/components/           Shared UI components
-src/data/                 Structured project/service content
+src/data/                 Structured portfolio, project, and site content
 src/lib/                  Shared utilities, types, navigation, and server logic
 public/                    Static assets
-docs/portfolio-revamp/    Current redesign specification and phase documents
+docs/portfolio-revamp/    Completed redesign specification, audits, and phase documents
 .github/workflows/         PR validation, production deployment, security scanning
 ```
 
@@ -179,7 +179,7 @@ GitHub Actions is the sole intended automated production deployment path. Keep t
 
 ### Version branches
 
-Branches such as `v2.01`, `v2.02`, and later versions are development milestones. They do not automatically deploy to production. Production changes are released only when intentionally merged/pushed to `main`.
+Branches such as `v2.01`, `v2.12`, `v3.00`, and later versions are permanent development/release milestones. They do not automatically deploy to production. Production changes are released only when intentionally merged/pushed to `main`.
 
 ### Manual deployment
 
