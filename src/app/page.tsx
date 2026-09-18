@@ -25,13 +25,7 @@ export const metadata: Metadata = {
     title: "Liam Mo — Software Developer",
     description: profileContent.intro,
   },
-  /*
-    The homepage stays noindex until the remaining owner-supplied launch
-    assets are final: profile photo, resume, and final personal gallery
-    photos. LinkedIn, experience, education, metadata, and canonical routes
-    are already complete. Remove this hold only during the final launch pass.
-  */
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 export default function Home() {
