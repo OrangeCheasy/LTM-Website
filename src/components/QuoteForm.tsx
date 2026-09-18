@@ -15,9 +15,9 @@ import {
 } from "@/lib/quote";
 
 /*
-  The site's main conversion mechanic (CLAUDE.md §8, build order step 6).
+  The site's main contact/conversion form.
 
-  CLIENT COMPONENT, per §3's own list of exceptions — a form is exactly the
+  CLIENT COMPONENT: a form is exactly the
   interactivity that justifies it: field state, a fetch to /api/quote, and
   success/error UI that native HTML alone cannot provide.
 
@@ -57,7 +57,7 @@ interface QuoteFormProps {
 }
 
 /*
-  Focus rings (CLAUDE.md §10, and the explicit ask for this pass): the global
+  Focus rings: the global
   :focus-visible outline in globals.css never reaches these fields, because
   `outline-none` below cancels it — every field was tabbing to nothing more
   than a 1px border tint change, verified by actually tabbing through the
