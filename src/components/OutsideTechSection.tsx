@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type PointerEvent } from "react";
 import Image from "next/image";
 import { Section, SectionHeader } from "@/components/ui";
 
@@ -87,7 +87,7 @@ export default function OutsideTechSection() {
     setActiveIndex(Math.max(0, Math.min(nextIndex, outsideTechPhotos.length - 1)));
   }
 
-  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType !== "mouse" || event.button !== 0) return;
 
     const track = trackRef.current;
@@ -102,7 +102,7 @@ export default function OutsideTechSection() {
     track.setPointerCapture(event.pointerId);
   }
 
-  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType !== "mouse" || !dragStateRef.current.active) return;
 
     const track = trackRef.current;
@@ -112,7 +112,7 @@ export default function OutsideTechSection() {
     track.scrollLeft = dragStateRef.current.startScrollLeft - deltaX;
   }
 
-  function endPointerDrag(event: React.PointerEvent<HTMLDivElement>) {
+  function endPointerDrag(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType !== "mouse" || !dragStateRef.current.active) return;
 
     dragStateRef.current.active = false;
