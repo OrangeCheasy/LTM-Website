@@ -2,8 +2,7 @@ import { SERVICE_META, type ServiceSlug } from "@/lib/types";
 
 /**
  * Shared with both QuoteForm.tsx (client-side UX validation) and
- * /api/quote/route.ts (server-side, the copy that actually matters — CLAUDE.md
- * §8: "Validate client-side and on the server. Never trust the client."). One
+ * /api/quote/route.ts (server-side, the copy that actually matters). One
  * definition of what a valid submission looks like, imported on both sides,
  * so the two validators cannot drift apart.
  *

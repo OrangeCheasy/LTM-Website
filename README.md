@@ -4,7 +4,7 @@ Personal portfolio website for **Liam Mo**, built around software development, p
 
 **Live site:** https://liamthemo.com
 
-The site is currently being rebuilt from its older service-first layout into a personal developer portfolio. The primary positioning for the redesign is **Software Developer**, with supporting work across full-stack development, game development, automation, tooling, and UI implementation.
+The former service-first site has been rebuilt as a personal developer portfolio. The primary positioning is **Software Developer**, with supporting work across full-stack development, game development, automation, tooling, and UI implementation.
 
 ## Current development line
 
@@ -12,7 +12,7 @@ The site is currently being rebuilt from its older service-first layout into a p
 | --- | --- |
 | Pre-revamp snapshot | `v2.00` |
 | Current major branch | `v2.12` |
-| Current phase | Phase 9 — SEO launch and final production hardening |
+| Current phase | Final pre-v3.00 repository cleanup |
 | Production domain | `liamthemo.com` |
 
 `v2.00` is the preserved snapshot of the website before the portfolio revamp and should not be rewritten.
@@ -32,8 +32,11 @@ Each portfolio phase maps to a `v0.01` version increment:
 | 7 | `v2.07` | GitHub activity integration |
 | 8 | `v2.08` | Work With Me, footer, visitor statistic |
 | 9 | `v2.09` | Accessibility, SEO, performance, launch audit |
+| Hardening | `v2.10`–`v2.12` | Secondary-page normalization, repository/deployment hardening, SEO launch |
+| Portfolio freeze | `v3.00` | Finalized portfolio baseline |
+| Visual CMS/editor | `v4.00` | Passkey-protected editing system (planned) |
 
-The detailed implementation plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/). The current launch state and remaining manual blockers are tracked in [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md).
+The completed redesign plan lives in [`docs/portfolio-revamp/`](./docs/portfolio-revamp/). The launch state is tracked in [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md), and the future v4.00 editor roadmap lives in [`docs/v4.00/`](./docs/v4.00/).
 
 ## Git workflow
 
@@ -114,7 +117,6 @@ To enable the counter in production without exposing the D1 resource ID in this 
 ```text
 src/app/                  Next.js routes and route-level metadata
 src/components/           Shared UI components
-src/components/service/   Existing service-specific UI components
 src/data/                 Structured project/service content
 src/lib/                  Shared utilities, types, navigation, and server logic
 public/                    Static assets
@@ -128,7 +130,7 @@ Start with:
 
 - [`docs/portfolio-revamp/README.md`](./docs/portfolio-revamp/README.md) — master redesign plan and homepage order
 - [`docs/portfolio-revamp/CURRENT-STATE-AUDIT.md`](./docs/portfolio-revamp/CURRENT-STATE-AUDIT.md) — current-site audit
-- [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md) — final launch readiness and manual blockers
+- [`docs/portfolio-revamp/LAUNCH-AUDIT.md`](./docs/portfolio-revamp/LAUNCH-AUDIT.md) — current launch/indexing state
 - `docs/portfolio-revamp/PHASE-XX-*.md` — phase-specific scope, implementation guidance, and acceptance criteria
 
 Legacy mockups and the old `CLAUDE.md`, `DEPLOYMENT.md`, and `TODO.md` documents have intentionally been removed. Do not use or recreate them as project specifications.
@@ -167,13 +169,9 @@ Optional visitor-counter secrets must be configured as a pair:
 
 The quote-form Discord webhook is a Cloudflare Worker runtime secret named `DISCORD_WEBHOOK_URL`. `wrangler.jsonc` declares it as required but never contains its value. Wrangler does not delete encrypted Worker secrets during a normal deploy.
 
-### Disable Cloudflare Git deployments
+### Deployment ownership safeguard
 
-Before treating GitHub Actions as the deployment owner, disable the existing Cloudflare Workers Git integration so a push to `main` cannot trigger two independent production deployments.
-
-In Cloudflare: **Workers & Pages → `ltm-website` → Settings → Builds → Disconnect** the Git repository/build integration. Disconnecting builds does not remove the currently deployed Worker.
-
-Do this after the GitHub `production` deployment secrets are configured and before relying on the first GitHub Actions production deployment.
+GitHub Actions is the sole intended automated production deployment path. Keep the retired Cloudflare Workers Git build integration disconnected so a push to `main` cannot trigger a second independent deployment.
 
 ### Pull-request validation
 
