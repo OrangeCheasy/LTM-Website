@@ -16,7 +16,7 @@ These instructions apply to all automated coding work in this repository.
 
 `LTM-Website` is Liam Mo's personal portfolio at `liamthemo.com`.
 
-The active v2 redesign is moving the site from a service-first freelance landing page to a personal **Software Developer** portfolio centered on:
+The launched site is a personal **Software Developer** portfolio centered on:
 
 - profile identity and contact links
 - featured software/game/automation projects
@@ -39,7 +39,7 @@ When instructions conflict, follow this order:
 4. `README.md`.
 5. Existing implementation patterns where they do not conflict with the above.
 
-`CLAUDE.md`, `DEPLOYMENT.md`, `TODO.md`, and old `*-mockup.png` files are intentionally retired and must not be recreated or treated as specifications.
+`CLAUDE.md`, `DEPLOYMENT.md`, `TODO.md`, and old `*-mockup.png` files are intentionally retired and must not be recreated or treated as specifications. The future passkey-protected visual CMS/editor roadmap lives under `docs/v4.00/` and becomes authoritative only when v4.00 work begins.
 
 ## 3. Branching and versioning — mandatory
 
@@ -83,58 +83,36 @@ Each redesign phase increments the version by `0.01`:
 - Phase 7 → `v2.07`
 - Phase 8 → `v2.08`
 - Phase 9 → `v2.09`
+- Launch/page hardening → `v2.10`–`v2.12`
 
-A new phase branch should be created from the completed previous version branch. Do not rewrite `v2.00`.
+`v2.00` remains immutable. The completed portfolio revamp is intended to be frozen as `v3.00`; the passkey-protected visual CMS/editor is planned for `v4.00`. New work must still use a minor branch from the active version branch before merge.
 
 ## 4. Deployment ownership — mandatory
 
-There is exactly **one automated production deployment owner: Cloudflare**.
+There is exactly **one automated production deployment owner: GitHub Actions**.
 
 ### Production deployment
 
-- Cloudflare's Git integration deploys from `main`.
-- A push/merge to `main` is the production release event.
-- Cloudflare's configured build command is `npm run build`.
-- Cloudflare's configured deploy command is `npx wrangler deploy`.
-- Do not add a GitHub Actions deploy job while Cloudflare's Git deployment remains enabled.
-- Do not add Cloudflare API tokens or account IDs to GitHub Actions for normal deployment.
-- Do not create a second automated Wrangler/OpenNext deployment path.
+- `.github/workflows/deploy.yml` deploys only from `main` (or explicit manual dispatch).
+- A deliberate merge/push to `main` is the production release event.
+- Version branches and minor working branches never deploy automatically.
+- The workflow installs the lockfile, injects optional private production bindings, audits production dependencies, lints, generates Cloudflare types, builds the OpenNext Worker, typechecks, verifies Cloudflare credentials, and then deploys the already-built Worker.
+- Cloudflare credentials/resource identifiers must stay in GitHub/Cloudflare secrets and must never be committed.
+- The retired Cloudflare Git build integration must remain disabled so a `main` push cannot trigger a second independent deployment path.
 
-The expected production command chain is:
+### Pull-request validation
 
-```bash
-npm run build
-npx wrangler deploy
-```
-
-`npm run build` performs the normal Next.js production build. `npx wrangler deploy` then reads `wrangler.jsonc`, whose `build.command` runs `npm run build:worker` before upload. That OpenNext build must generate `.open-next/worker.js` and `.open-next/assets` before Wrangler consumes them.
-
-Do not remove Wrangler's `build.command` while Cloudflare's build command remains `npm run build`; a plain Next.js build does not create the `.open-next/worker.js` entry point.
-
-### GitHub Actions
-
-GitHub Actions is **validation-only**.
-
-`.github/workflows/ci.yml` should run for pull requests targeting:
-
-- `main`
-- version branches matching `v*`
-
-Its job is to validate code by installing dependencies, linting, generating Cloudflare types, building the OpenNext worker, and typechecking. It must not upload, publish, create a Worker version, or deploy.
-
-The workflow intentionally does not run on merge/push merely to repeat Cloudflare's production build.
+`.github/workflows/ci.yml` validates pull requests targeting `main` or version branches matching `v*`. It must never deploy.
 
 ### Version and minor branches
 
 - Minor branches never deploy.
-- Version branches such as `v2.01`, `v2.02`, etc. are development milestones and do not automatically deploy under repository policy.
-- Production only changes when completed work is intentionally merged/pushed to `main`.
+- Version branches are permanent development/release milestones and do not automatically deploy.
+- Production changes only when completed version work is intentionally released to `main`.
 
 ### Manual deployment
 
-A direct `npx wrangler deploy` may be used for recovery or explicit maintenance, but it is not normal automation. Do not run it unless the user explicitly requests a manual deployment.
-
-Because Wrangler owns the OpenNext pre-deploy build hook, direct `wrangler deploy` must continue to generate the required Worker artifact before upload.
+`npm run deploy` may be used only when the user explicitly requests a manual deployment. Normal production delivery goes through the main-only GitHub Actions workflow.
 
 ## 5. Phase workflow
 
@@ -221,14 +199,7 @@ npm run preview
 npx wrangler deploy
 ```
 
-Production Cloudflare Git integration uses:
-
-```bash
-npm run build
-npx wrangler deploy
-```
-
-`npm run build:worker` must produce `.open-next/worker.js` before Wrangler upload/deploy operations consume the configured entry point. The Wrangler `build.command` is what guarantees this when production uses `npx wrangler deploy` after the standard `npm run build` step.
+Production deployment is performed by `.github/workflows/deploy.yml` after validation. `npm run build:worker` must produce `.open-next/worker.js` and `.open-next/assets` before the final OpenNext Cloudflare deploy step.
 
 Do not expose Cloudflare secrets or GitHub tokens through `NEXT_PUBLIC_*` variables or client bundles.
 
@@ -238,7 +209,9 @@ For code-bearing changes, run or verify the equivalent of:
 
 ```bash
 npm ci
+npm audit --omit=dev --audit-level=high
 npm run lint
+npm run cf-typegen
 npm run build:worker
 npx tsc --noEmit
 ```
