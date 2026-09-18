@@ -70,21 +70,49 @@ export default function OutsideTechSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
+  function getNearestPhotoIndex() {
+    const track = trackRef.current;
+    if (!track) return 0;
+
+    const slides = Array.from(track.children) as HTMLElement[];
+    if (slides.length === 0) return 0;
+
+    const viewportCenter = track.scrollLeft + track.clientWidth / 2;
+    let nearestIndex = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+      const distance = Math.abs(slideCenter - viewportCenter);
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    });
+
+    return nearestIndex;
+  }
+
   function scrollToPhoto(index: number) {
     const track = trackRef.current;
     if (!track) return;
 
     const nextIndex = Math.max(0, Math.min(index, outsideTechPhotos.length - 1));
-    track.scrollTo({ left: nextIndex * track.clientWidth, behavior: "smooth" });
-    setActiveIndex(nextIndex);
+    const slide = track.children.item(nextIndex) as HTMLElement | null;
+    if (!slide) return;
+
+    const centeredLeft = slide.offsetLeft - (track.clientWidth - slide.clientWidth) / 2;
+    const maxScrollLeft = track.scrollWidth - track.clientWidth;
+
+    track.scrollTo({
+      left: Math.max(0, Math.min(centeredLeft, maxScrollLeft)),
+      behavior: "smooth",
+    });
   }
 
   function handleScroll() {
-    const track = trackRef.current;
-    if (!track || track.clientWidth === 0) return;
-
-    const nextIndex = Math.round(track.scrollLeft / track.clientWidth);
-    setActiveIndex(Math.max(0, Math.min(nextIndex, outsideTechPhotos.length - 1)));
+    setActiveIndex(getNearestPhotoIndex());
   }
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
@@ -125,8 +153,7 @@ export default function OutsideTechSection() {
       track.releasePointerCapture(event.pointerId);
     }
 
-    const nearestIndex = Math.round(track.scrollLeft / track.clientWidth);
-    scrollToPhoto(nearestIndex);
+    scrollToPhoto(getNearestPhotoIndex());
   }
 
   return (
@@ -170,10 +197,13 @@ export default function OutsideTechSection() {
               tabIndex={0}
               role="region"
               aria-label="Outside the Tech photo gallery"
-              className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto rounded-2xl border border-border bg-surface-2 select-none ${isDragging ? "cursor-grabbing snap-none" : "cursor-grab"}`}
+              className={`no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-2xl border border-border bg-surface-2 px-3 py-3 scroll-smooth select-none sm:gap-4 sm:px-4 sm:py-4 ${isDragging ? "cursor-grabbing snap-none" : "cursor-grab"}`}
             >
             {outsideTechPhotos.map((photo) => (
-              <div key={photo.src} className="relative aspect-[4/3] w-full shrink-0 snap-center">
+              <div
+                key={photo.src}
+                className="relative aspect-[4/3] w-[90%] shrink-0 snap-center overflow-hidden rounded-xl sm:w-[92%]"
+              >
                 <Image
                   src={photo.src}
                   alt={photo.alt}
