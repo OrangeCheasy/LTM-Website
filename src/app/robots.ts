@@ -1,11 +1,8 @@
 import type { MetadataRoute } from "next";
 
 /*
-  Crawlers may fetch public pages so route-level robots metadata can be
-  respected. Dynamic API endpoints remain excluded from crawling. The
-  homepage itself stays noindex until the remaining manual launch inputs are
-  complete, rather than being blocked here where crawlers could not see that
-  directive.
+  Public pages are crawlable and route-level metadata controls indexing.
+  Dynamic API endpoints remain excluded from crawling.
 */
 export default function robots(): MetadataRoute.Robots {
   return {
