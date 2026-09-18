@@ -8,7 +8,7 @@ export type NavLink = SiteNavigationItem;
 
 export const mainNav = mainNavigation;
 
-/* Legacy CTASection consumes this until Phase 8 replaces the old closing CTA. */
+/* Shared default CTA copy for CTASection. */
 export const CTA = { href: "/contact", label: "Contact Me" } as const;
 
 export const SITE_NAME = siteIdentity.name;
